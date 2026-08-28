@@ -100,8 +100,8 @@
     "charts": {
       "title": "grafici",
       "tabDecade": "per decennio",
-      "tabCompare": "tu vs la massa",
       "tabGenre": "per genere",
+      "compareToggle": "tu vs la massa",
       "decadeLabel": "anni {decade}",
       "decadeEmpty": "Nessun film con anno noto.",
       "genreEmpty": "Nessun genere disponibile: completa l'analisi per generare il grafico.",

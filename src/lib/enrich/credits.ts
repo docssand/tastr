@@ -79,9 +79,11 @@ export async function readCachedCredits(movies: WatchedMovie[]): Promise<Credits
 
   const cachedCredits = await safeGetMany<MovieCredits>(CREDITS_STORE, Array.from(ids));
   cachedCredits.forEach((value, key) => {
-    // Le cache scritte prima dell'introduzione di generi/voto TMDB non hanno `genres`:
-    // trattarle come assenti forza un refetch che le completa, invece di lasciarle monche.
-    if (value.genres !== undefined) snapshot.credits.set(key as number, value);
+    // Le cache scritte prima dell'introduzione di generi/voto/anno TMDB non hanno questi campi
+    // (l'anno può legittimamente mancare anche dopo un fetch riuscito, quindi si controlla la
+    // presenza della chiave, non il suo valore): trattarle come assenti forza un refetch che le
+    // completa, invece di lasciarle monche.
+    if (value.genres !== undefined && "year" in value) snapshot.credits.set(key as number, value);
   });
 
   return snapshot;
@@ -129,6 +131,13 @@ async function resolveTmdbId(movie: WatchedMovie, signal?: AbortSignal): Promise
   return null;
 }
 
+/** "1998-04-12" → 1998. Alcuni titoli TMDB non hanno una release_date: in quel caso resta undefined. */
+function parseReleaseYear(releaseDate?: string): number | undefined {
+  if (!releaseDate) return undefined;
+  const year = Number(releaseDate.slice(0, 4));
+  return Number.isFinite(year) ? year : undefined;
+}
+
 async function fetchCredits(tmdbId: number, signal?: AbortSignal): Promise<MovieCredits> {
   const response = await getMovieDetails(tmdbId, signal);
   return {
@@ -141,6 +150,7 @@ async function fetchCredits(tmdbId: number, signal?: AbortSignal): Promise<Movie
       .map((c) => ({ id: c.id, name: c.name, order: c.order })),
     genres: (response.genres ?? []).map((g) => g.name),
     voteAverage: typeof response.vote_average === "number" ? response.vote_average : undefined,
+    year: parseReleaseYear(response.release_date),
     fetchedAt: new Date().toISOString(),
   };
 }

@@ -100,8 +100,8 @@
     "charts": {
       "title": "charts",
       "tabDecade": "by decade",
-      "tabCompare": "you vs the crowd",
       "tabGenre": "by genre",
+      "compareToggle": "you vs the crowd",
       "decadeLabel": "{decade}s",
       "decadeEmpty": "No movies with a known year.",
       "genreEmpty": "No genres available yet: finish the analysis to build the chart.",

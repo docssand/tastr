@@ -55,6 +55,8 @@ export interface MovieCredits {
   genres: string[];
   /** Voto medio pubblico TMDB, scala 0-10 come il voto personale. */
   voteAverage?: number;
+  /** Anno di uscita da TMDB: unica fonte per le sorgenti di import che non lo forniscono (es. Bingers). */
+  year?: number;
   fetchedAt: string;
 }
 
