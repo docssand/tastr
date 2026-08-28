@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/Button";
 import { useMovieCredits } from "@/components/dashboard/useMovieCredits";
 import {
   compareByDecade,
+  compareByGenre,
   comparisonSummary,
   decadeStats,
   genreStats,
-  type DecadeComparison,
   type DecadeStat,
   type GenreStat,
 } from "@/lib/analysis/charts";
@@ -17,10 +17,10 @@ import { formatMessage } from "@/lib/i18n";
 import type { Dictionary } from "@/i18n/types";
 import type { NormalizedEntry } from "@/lib/types";
 
-/** Numero di generi mostrati: oltre, il grafico diventa illeggibile e serve una tabella. */
+/** Numero di barre/righe mostrate: oltre, il grafico diventa illeggibile e serve una tabella. */
 const TOP_GENRES = 8;
 
-type Tab = "decade" | "compare" | "genre";
+type Tab = "decade" | "genre";
 type ChartsDict = Dictionary["dashboard"]["charts"];
 
 interface ChartsPanelProps {
@@ -34,10 +34,18 @@ interface Formatters {
   delta: Intl.NumberFormat;
 }
 
-const tabs: { key: Tab; label: (d: ChartsDict) => string; needsCredits: boolean }[] = [
-  { key: "decade", label: (d) => d.tabDecade, needsCredits: false },
-  { key: "compare", label: (d) => d.tabCompare, needsCredits: true },
-  { key: "genre", label: (d) => d.tabGenre, needsCredits: true },
+/** Riga generica di confronto: la formattazione dell'etichetta (decennio o genere) resta a chi chiama. */
+interface ComparisonRow {
+  key: string;
+  label: string;
+  count: number;
+  personalAvg: number;
+  massAvg: number;
+}
+
+const tabs: { key: Tab; label: (d: ChartsDict) => string }[] = [
+  { key: "decade", label: (d) => d.tabDecade },
+  { key: "genre", label: (d) => d.tabGenre },
 ];
 
 /** Barra orizzontale: lunghezza = grandezza, etichetta a destra = il tuo voto medio. */
@@ -139,15 +147,15 @@ function GenreChart({
 }
 
 /** Riga a "manubrio": due pallini sulla stessa scala 0-10, uniti da un tratto. */
-function DumbbellRow({ comparison, dict, format }: { comparison: DecadeComparison; dict: ChartsDict; format: Formatters }) {
+function DumbbellRow({ row, dict, format }: { row: ComparisonRow; dict: ChartsDict; format: Formatters }) {
   const toPct = (v: number) => `${(v / 10) * 100}%`;
-  const left = Math.min(comparison.personalAvg, comparison.massAvg);
-  const right = Math.max(comparison.personalAvg, comparison.massAvg);
+  const left = Math.min(row.personalAvg, row.massAvg);
+  const right = Math.max(row.personalAvg, row.massAvg);
 
   return (
     <li className="flex items-center gap-3">
-      <span className="w-24 shrink-0 text-xs text-muted">
-        {formatMessage(dict.decadeLabel, { decade: comparison.decade })}
+      <span className="w-24 shrink-0 truncate text-xs text-muted" title={row.label}>
+        {row.label}
       </span>
       <div className="relative h-5 flex-1">
         <div className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-border" />
@@ -157,33 +165,25 @@ function DumbbellRow({ comparison, dict, format }: { comparison: DecadeCompariso
         />
         <span
           className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-muted ring-2 ring-surface"
-          style={{ left: toPct(comparison.massAvg) }}
-          title={`${dict.crowd}: ${format.rating.format(comparison.massAvg)}`}
+          style={{ left: toPct(row.massAvg) }}
+          title={`${dict.crowd}: ${format.rating.format(row.massAvg)}`}
         />
         <span
           className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent ring-2 ring-surface"
-          style={{ left: toPct(comparison.personalAvg) }}
-          title={`${dict.you}: ${format.rating.format(comparison.personalAvg)}`}
+          style={{ left: toPct(row.personalAvg) }}
+          title={`${dict.you}: ${format.rating.format(row.personalAvg)}`}
         />
       </div>
       <span className="w-14 shrink-0 text-right text-xs tabular-nums text-foreground/90">
-        {format.delta.format(comparison.personalAvg - comparison.massAvg)}
+        {format.delta.format(row.personalAvg - row.massAvg)}
       </span>
     </li>
   );
 }
 
-function CompareChart({
-  decades,
-  dict,
-  format,
-}: {
-  decades: DecadeComparison[];
-  dict: ChartsDict;
-  format: Formatters;
-}) {
-  const summary = useMemo(() => comparisonSummary(decades), [decades]);
-  if (decades.length === 0) return <p className="text-sm leading-relaxed text-muted">{dict.compareEmpty}</p>;
+function CompareChart({ rows, dict, format }: { rows: ComparisonRow[]; dict: ChartsDict; format: Formatters }) {
+  const summary = useMemo(() => comparisonSummary(rows), [rows]);
+  if (rows.length === 0) return <p className="text-sm leading-relaxed text-muted">{dict.compareEmpty}</p>;
 
   return (
     <div>
@@ -198,8 +198,8 @@ function CompareChart({
         </span>
       </div>
       <ul className="flex flex-col gap-3">
-        {decades.map((d) => (
-          <DumbbellRow key={d.decade} comparison={d} dict={dict} format={format} />
+        {rows.map((row) => (
+          <DumbbellRow key={row.key} row={row} dict={dict} format={format} />
         ))}
       </ul>
       <div className="mt-2 flex items-center gap-3">
@@ -225,6 +225,7 @@ function CompareChart({
 
 export function ChartsPanel({ lang, entries, dict }: ChartsPanelProps) {
   const [tab, setTab] = useState<Tab>("decade");
+  const [compareMode, setCompareMode] = useState(false);
   const cd = dict.charts;
   const tp = dict.topPeople;
   const { movies, credits, status, pendingCount, progress, errorCode, enrich, cancel } = useMovieCredits(entries);
@@ -241,30 +242,65 @@ export function ChartsPanel({ lang, entries, dict }: ChartsPanelProps) {
 
   const decades = useMemo(() => decadeStats(movies, credits), [movies, credits]);
   const genres = useMemo(() => genreStats(movies, credits), [movies, credits]);
-  const compareDecades = useMemo(() => compareByDecade(movies, credits), [movies, credits]);
 
-  const activeTab = tabs.find((t) => t.key === tab)!;
-  const isLoading = activeTab.needsCredits && status === "loading";
+  const compareDecadeRows = useMemo<ComparisonRow[]>(
+    () =>
+      compareByDecade(movies, credits).map((d) => ({
+        key: String(d.decade),
+        label: formatMessage(cd.decadeLabel, { decade: d.decade }),
+        count: d.count,
+        personalAvg: d.personalAvg,
+        massAvg: d.massAvg,
+      })),
+    [movies, credits, cd.decadeLabel],
+  );
+  const compareGenreRows = useMemo<ComparisonRow[]>(
+    () =>
+      compareByGenre(movies, credits)
+        .slice(0, TOP_GENRES)
+        .map((g) => ({ key: g.genre, label: g.genre, count: g.count, personalAvg: g.personalAvg, massAvg: g.massAvg })),
+    [movies, credits],
+  );
+
+  // Il genere richiede sempre i credits TMDB; il decennio solo in modalità confronto
+  // (in modalità personale può bastare l'anno già presente nell'import).
+  const needsCredits = tab === "genre" || compareMode;
+  const isLoading = needsCredits && status === "loading";
 
   return (
     <Panel title={cd.title}>
-      <div className="flex flex-wrap">
-        {tabs.map(({ key, label }, i) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setTab(key)}
-            aria-pressed={tab === key}
-            className={`border px-4 py-1.5 text-xs uppercase tracking-widest transition-colors ${
-              tab === key ? "border-accent text-accent" : "border-border-strong text-muted hover:text-foreground"
-            } ${i > 0 ? "-ml-px" : ""}`}
-          >
-            {label(cd)}
-          </button>
-        ))}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex">
+          {tabs.map(({ key, label }, i) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setTab(key)}
+              aria-pressed={tab === key}
+              className={`border px-4 py-1.5 text-xs uppercase tracking-widest transition-colors ${
+                tab === key ? "border-accent text-accent" : "border-border-strong text-muted hover:text-foreground"
+              } ${i > 0 ? "-ml-px" : ""}`}
+            >
+              {label(cd)}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setCompareMode((v) => !v)}
+          aria-pressed={compareMode}
+          className={`inline-flex items-center gap-2 border px-4 py-1.5 text-xs uppercase tracking-widest transition-colors ${
+            compareMode ? "border-accent text-accent" : "border-border-strong text-muted hover:text-foreground"
+          }`}
+        >
+          <span
+            className={`h-2 w-2 rounded-full transition-colors ${compareMode ? "bg-accent" : "bg-border-strong"}`}
+          />
+          {cd.compareToggle}
+        </button>
       </div>
 
-      {activeTab.needsCredits && status === "enriching" && progress && (
+      {needsCredits && status === "enriching" && progress && (
         <div className="mt-5 border border-border-strong px-4 py-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <span className="text-xs text-muted">
@@ -287,7 +323,7 @@ export function ChartsPanel({ lang, entries, dict }: ChartsPanelProps) {
         </div>
       )}
 
-      {activeTab.needsCredits && status === "incomplete" && (
+      {needsCredits && status === "incomplete" && (
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border border-border-strong px-4 py-3">
           <span className="text-xs text-muted">
             {formatMessage(tp.incompleteBody, { count: pendingCount })}
@@ -298,7 +334,7 @@ export function ChartsPanel({ lang, entries, dict }: ChartsPanelProps) {
         </div>
       )}
 
-      {activeTab.needsCredits && status === "error" && (
+      {needsCredits && status === "error" && (
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border border-danger px-4 py-3">
           <span className="text-xs text-danger">{errorCode === "config" ? tp.errorConfig : tp.errorGeneric}</span>
           {errorCode !== "config" && (
@@ -313,9 +349,13 @@ export function ChartsPanel({ lang, entries, dict }: ChartsPanelProps) {
         {isLoading ? (
           <p className="text-sm text-muted">{cd.loading}</p>
         ) : tab === "decade" ? (
-          <DecadeChart stats={decades} dict={cd} format={format} noRatingLabel={tp.filmsNoRating} />
-        ) : tab === "compare" ? (
-          <CompareChart decades={compareDecades} dict={cd} format={format} />
+          compareMode ? (
+            <CompareChart rows={compareDecadeRows} dict={cd} format={format} />
+          ) : (
+            <DecadeChart stats={decades} dict={cd} format={format} noRatingLabel={tp.filmsNoRating} />
+          )
+        ) : compareMode ? (
+          <CompareChart rows={compareGenreRows} dict={cd} format={format} />
         ) : (
           <GenreChart stats={genres} dict={cd} format={format} noRatingLabel={tp.filmsNoRating} />
         )}

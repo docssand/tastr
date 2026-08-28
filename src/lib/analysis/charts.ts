@@ -124,6 +124,44 @@ export function compareByDecade(movies: WatchedMovie[], credits: Map<number, Mov
     .sort((a, b) => a.decade - b.decade);
 }
 
+export interface GenreComparison {
+  genre: string;
+  count: number;
+  personalAvg: number;
+  massAvg: number;
+}
+
+/**
+ * Confronta, genere per genere, la tua media voti con la media pubblica TMDB.
+ * Come in genreStats, un film con più generi conta una volta per ciascuno.
+ */
+export function compareByGenre(movies: WatchedMovie[], credits: Map<number, MovieCredits>): GenreComparison[] {
+  const byGenre = new Map<string, { personalSum: number; massSum: number; count: number }>();
+
+  for (const movie of movies) {
+    if (typeof movie.rating !== "number" || !movie.tmdbId) continue;
+    const info = credits.get(movie.tmdbId);
+    if (!info || typeof info.voteAverage !== "number") continue;
+
+    for (const genre of info.genres) {
+      const bucket = byGenre.get(genre) ?? { personalSum: 0, massSum: 0, count: 0 };
+      bucket.personalSum += movie.rating;
+      bucket.massSum += info.voteAverage;
+      bucket.count += 1;
+      byGenre.set(genre, bucket);
+    }
+  }
+
+  return Array.from(byGenre.entries())
+    .map(([genre, b]) => ({
+      genre,
+      count: b.count,
+      personalAvg: b.personalSum / b.count,
+      massAvg: b.massSum / b.count,
+    }))
+    .sort((a, b) => b.count - a.count || a.genre.localeCompare(b.genre));
+}
+
 export interface ComparisonSummary {
   count: number;
   personalAvg: number;
@@ -131,17 +169,19 @@ export interface ComparisonSummary {
   delta: number;
 }
 
-/** Riepilogo complessivo del confronto, pesato per numero di film di ogni decennio. */
-export function comparisonSummary(decades: DecadeComparison[]): ComparisonSummary | null {
-  if (decades.length === 0) return null;
+/** Riepilogo complessivo del confronto, pesato per numero di film di ogni gruppo (decennio o genere). */
+export function comparisonSummary(
+  groups: Array<{ count: number; personalAvg: number; massAvg: number }>,
+): ComparisonSummary | null {
+  if (groups.length === 0) return null;
 
   let count = 0;
   let personalSum = 0;
   let massSum = 0;
-  for (const d of decades) {
-    count += d.count;
-    personalSum += d.personalAvg * d.count;
-    massSum += d.massAvg * d.count;
+  for (const g of groups) {
+    count += g.count;
+    personalSum += g.personalAvg * g.count;
+    massSum += g.massAvg * g.count;
   }
 
   const personalAvg = personalSum / count;
