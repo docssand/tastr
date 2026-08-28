@@ -12,7 +12,7 @@ function decadeOf(year: number) {
   return Math.floor(year / 10) * 10;
 }
 
-function yearOf(movie: WatchedMovie, credits: Map<number, MovieCredits>): number | undefined {
+export function releaseYearOf(movie: WatchedMovie, credits: Map<number, MovieCredits>): number | undefined {
   // Alcune sorgenti di import (es. Bingers) non includono l'anno di uscita: si ripiega
   // sulla release_date TMDB, disponibile solo dopo l'arricchimento dei credits.
   return movie.year ?? (movie.tmdbId ? credits.get(movie.tmdbId)?.year : undefined);
@@ -23,7 +23,7 @@ export function decadeStats(movies: WatchedMovie[], credits: Map<number, MovieCr
   const byDecade = new Map<number, { count: number; ratingSum: number; ratedCount: number }>();
 
   for (const movie of movies) {
-    const year = yearOf(movie, credits);
+    const year = releaseYearOf(movie, credits);
     if (year === undefined) continue;
     const decade = decadeOf(year);
     const bucket = byDecade.get(decade) ?? { count: 0, ratingSum: 0, ratedCount: 0 };
@@ -103,7 +103,7 @@ export function compareByDecade(movies: WatchedMovie[], credits: Map<number, Mov
     if (typeof movie.rating !== "number" || !movie.tmdbId) continue;
     const info = credits.get(movie.tmdbId);
     if (!info || typeof info.voteAverage !== "number") continue;
-    const year = yearOf(movie, credits);
+    const year = releaseYearOf(movie, credits);
     if (year === undefined) continue;
 
     const decade = decadeOf(year);

@@ -2,14 +2,16 @@
   "nav": {
     "home": "home",
     "upload": "upload",
-    "dashboard": "dashboard"
+    "dashboard": "dashboard",
+    "wrapped": "wrapped"
   },
   "footer": "local-first · your data stays in the browser · v0.1.0",
   "meta": {
     "title": "Tastr",
     "description": "Discover your movie taste from your Trakt, Letterboxd, or Bingers data.",
     "dashboardTitle": "dashboard — Tastr",
-    "uploadTitle": "upload — Tastr"
+    "uploadTitle": "upload — Tastr",
+    "wrappedTitle": "wrapped — Tastr"
   },
   "home": {
     "eyebrow": "// movie taste analysis",
@@ -131,6 +133,319 @@
     },
     "toastClearedTitle": "import cleared",
     "toastClearedBody": "Local data has been removed. Upload a new export to rebuild your dashboard."
+  },
+  "wrapped": {
+    "eyebrow": "// the year in cards",
+    "title": "Wrapped",
+    "lead": "Eight cards and a verdict on how you watched movies, rebuilt for every year in your history.",
+    "emptyTitle": "no import found",
+    "emptyBody": "We don't have any data to show yet. Upload an export to generate your Wrapped.",
+    "emptyCta": "upload an export",
+    "noYearsTitle": "no dated viewings",
+    "noYearsBody": "Your import has no movie with a watch date, so there is no year to wrap. Exports from Trakt, Letterboxd, and Bingers normally include one.",
+    "yearsLabel": "year",
+    "inProgress": "in progress",
+    "cardCounter": "{index} / {total}",
+    "notEnough": "Not enough movies watched in {year} to call this one.",
+    "needsCredits": "This card needs TMDB data: finish the analysis to unlock it.",
+    "yearSummary": "{movies} movies · {viewings} viewings · {rated} rated",
+    "cards": {
+      "rating": {
+        "title": "how you rate",
+        "prompt": "Old movies or new ones — which get your higher scores?"
+      },
+      "watching": {
+        "title": "what you watch",
+        "prompt": "Do you queue up new releases, or the back catalogue?"
+      },
+      "focus": {
+        "title": "how deep you dig",
+        "prompt": "Do you go down a rabbit hole, or sample everything once?"
+      },
+      "crowd": {
+        "title": "you and the crowd",
+        "prompt": "Do your ratings track what everyone else thinks?"
+      },
+      "genres": {
+        "title": "your two genres",
+        "prompt": "The pair you watched most, and the animal it makes."
+      },
+      "reviewer": {
+        "title": "reviewer or lurker",
+        "prompt": "How much of what you watch do you actually rate?"
+      },
+      "rhythm": {
+        "title": "your rhythm",
+        "prompt": "Spread across the year, or all in a few weeks?"
+      },
+      "rewatch": {
+        "title": "again, or never again",
+        "prompt": "How much of your year was spent on movies you already knew?"
+      }
+    },
+    "verdicts": {
+      "nostalgic": {
+        "name": "Nostalgic",
+        "body": "The older the movie, the higher you score it. Your best ratings live in the back catalogue."
+      },
+      "modern": {
+        "name": "Modern",
+        "body": "Recent releases get your best scores. What just came out is what convinces you."
+      },
+      "gourmet": {
+        "name": "Gourmet",
+        "body": "Your ratings don't care what year it is. Old or new, you score on the movie in front of you."
+      },
+      "current": {
+        "name": "Current",
+        "body": "Most of what you watched is fresh out. You keep up with what is on right now."
+      },
+      "archivist": {
+        "name": "Archivist",
+        "body": "You spend your year in the catalogue. Most of what you watched is older than a decade."
+      },
+      "omnivore": {
+        "name": "Omnivore",
+        "body": "New releases and old ones, in comparable doses. Release year is not how you pick."
+      },
+      "specialist": {
+        "name": "Specialist",
+        "body": "You go down rabbit holes: a few genres, directors you come back to, whole filmographies."
+      },
+      "curator": {
+        "name": "Curator",
+        "body": "You have favourites and you feed them, but you keep enough room for what you have never tried."
+      },
+      "wanderer": {
+        "name": "Wanderer",
+        "body": "You almost never watch the same thing twice in a row. Every movie comes from somewhere else."
+      },
+      "conformist": {
+        "name": "Conformist",
+        "body": "What the crowd calls good, you call good too. Your ranking and TMDB's move together."
+      },
+      "independent": {
+        "name": "Independent",
+        "body": "You overlap with the crowd, then part ways often enough to keep it interesting."
+      },
+      "contrarian": {
+        "name": "Contrarian",
+        "body": "Public consensus tells us almost nothing about your ratings. You score for yourself."
+      },
+      "reviewer": {
+        "name": "Reviewer",
+        "body": "Almost nothing gets past you unrated. Watching and judging are the same act."
+      },
+      "selective": {
+        "name": "Selective",
+        "body": "You rate when a movie earns an opinion, and let the rest go by unmarked."
+      },
+      "lurker": {
+        "name": "Lurker",
+        "body": "You watch a lot and say little. Most of your year left no rating behind."
+      },
+      "metronome": {
+        "name": "Metronome",
+        "body": "Movies almost every month, in steady doses. Your year has no empty stretches."
+      },
+      "tidal": {
+        "name": "Tidal",
+        "body": "You come and go in waves: busy stretches, then quiet ones, then back again."
+      },
+      "marathoner": {
+        "name": "Marathoner",
+        "body": "Your year is concentrated in bursts. When you watch, you watch a lot at once."
+      },
+      "ritualist": {
+        "name": "Ritualist",
+        "body": "A large share of your year went to movies you already knew by heart. Rewatching is the point."
+      },
+      "loyalist": {
+        "name": "Loyalist",
+        "body": "You mostly move forward, but you keep going back to a handful of favourites."
+      },
+      "pioneer": {
+        "name": "Pioneer",
+        "body": "Almost every viewing was a first time. You would rather risk a new one than replay a sure thing."
+      }
+    },
+    "animals": {
+      "hawk": {
+        "name": "Hawk",
+        "body": "Two genres, one gear: full speed. You watch movies that move, and you watch them for the chase."
+      },
+      "panther": {
+        "name": "Panther",
+        "body": "Fast and unlit. You like the hunt better when nobody on screen can be trusted."
+      },
+      "mustang": {
+        "name": "Mustang",
+        "body": "You want the ride, but you want someone worth caring about while it happens."
+      },
+      "dragon": {
+        "name": "Dragon",
+        "body": "Nothing you watch obeys physics, and none of it has time to explain itself."
+      },
+      "monkey": {
+        "name": "Monkey",
+        "body": "Chaos, but funny. Your movies run fast and land on a punchline."
+      },
+      "eagle": {
+        "name": "Eagle",
+        "body": "You watch what really happened, told at altitude and at speed."
+      },
+      "raven": {
+        "name": "Raven",
+        "body": "You spend your movie hours where the lights are off and the motive is unclear."
+      },
+      "wolf": {
+        "name": "Wolf",
+        "body": "You look for the wound under the crime. Nobody in your movies gets out clean."
+      },
+      "bat": {
+        "name": "Bat",
+        "body": "You take your nightmares invented. The stranger the world, the darker you like it."
+      },
+      "fox": {
+        "name": "Fox",
+        "body": "You laugh in the wrong places, on purpose. Comedy and crime are the same trick to you."
+      },
+      "owl": {
+        "name": "Owl",
+        "body": "You watch what happened, then what it hid. Patient, and always a little suspicious."
+      },
+      "swan": {
+        "name": "Swan",
+        "body": "Feelings at full volume, with a score underneath. You are here for the ache."
+      },
+      "deer": {
+        "name": "Deer",
+        "body": "You want to be moved somewhere that doesn't exist: tenderness, with the world redrawn."
+      },
+      "otter": {
+        "name": "Otter",
+        "body": "You watch movies that like people. Warm, quick, and easy to put on again."
+      },
+      "elephant": {
+        "name": "Elephant",
+        "body": "You keep what happened and what it cost. Long memory, heavy heart."
+      },
+      "octopus": {
+        "name": "Octopus",
+        "body": "Everything you watch was invented from scratch, and the stranger it gets the better."
+      },
+      "dolphin": {
+        "name": "Dolphin",
+        "body": "Imagination with a grin. You like your other worlds friendly."
+      },
+      "chameleon": {
+        "name": "Chameleon",
+        "body": "Half documented, half impossible. You keep changing which half you believe."
+      },
+      "meerkat": {
+        "name": "Meerkat",
+        "body": "You watch to feel better, preferably with company, and you are not sorry about it."
+      },
+      "raccoon": {
+        "name": "Raccoon",
+        "body": "You go through real life looking for the funny part, and you usually find it."
+      },
+      "tortoise": {
+        "name": "Tortoise",
+        "body": "You watch what actually happened, slowly, and you remember all of it."
+      }
+    },
+    "archetypes": {
+      "keeper": {
+        "name": "The Keeper",
+        "body": "You dig deep into a few corners, and what you find there the world already calls good. You are building a canon, not arguing with one."
+      },
+      "scholar": {
+        "name": "The Scholar",
+        "body": "You follow genres and directors all the way down, and you come out with your own opinion of them."
+      },
+      "cultist": {
+        "name": "The Cultist",
+        "body": "You go deep and you come back with verdicts nobody shares. Your favourites are yours alone."
+      },
+      "classicist": {
+        "name": "The Classicist",
+        "body": "You keep a broad diet and land close to consensus: a reliable recommendation, and rarely a surprising one."
+      },
+      "cinephile": {
+        "name": "The Cinephile",
+        "body": "Wide range, your own scoreboard. You have seen enough to disagree on purpose."
+      },
+      "heretic": {
+        "name": "The Heretic",
+        "body": "You watch a bit of everything and rate almost none of it the way the crowd does."
+      },
+      "explorer": {
+        "name": "The Explorer",
+        "body": "You are always somewhere new, and you tend to like what everyone else liked when you get there."
+      },
+      "nomad": {
+        "name": "The Nomad",
+        "body": "You never stay in one genre long, and you judge every stop for yourself."
+      },
+      "maverick": {
+        "name": "The Maverick",
+        "body": "No territory, no consensus. Your year is impossible to predict from anyone else's ratings."
+      },
+      "newcomer": {
+        "name": "The Newcomer",
+        "body": "This year doesn't have enough movies to pin down a profile yet. Watch more, rate more, come back."
+      }
+    },
+    "metrics": {
+      "oldAvg": "avg on movies 10+ years old",
+      "recentAvg": "avg on movies under 10 years",
+      "ratingGap": "gap, old minus recent",
+      "recentShare": "released in the last 10 years",
+      "oldShare": "10+ years old",
+      "medianAge": "median age at viewing (years)",
+      "topGenresShare": "share of your top 3 genres",
+      "repeatDirectorShare": "movies by a director you saw again",
+      "distinctGenres": "distinct genres",
+      "crowdCorrelation": "agreement with TMDB (−1 to 1)",
+      "crowdDelta": "your rating minus the crowd's",
+      "comparedCount": "movies compared",
+      "topGenre": "first genre",
+      "secondGenre": "second genre",
+      "topGenreCount": "movies in the first genre",
+      "ratedShare": "movies you rated",
+      "ratedCount": "ratings given",
+      "avgRating": "your average",
+      "viewings": "viewings",
+      "activeMonths": "months with at least one movie",
+      "peakMonthShare": "viewings in your busiest month",
+      "rewatchShare": "viewings that were rewatches",
+      "rewatchCount": "rewatches",
+      "mostRewatched": "most rewatched"
+    },
+    "summary": {
+      "title": "the verdict",
+      "tag": "09",
+      "movies": "movies",
+      "viewings": "viewings",
+      "rated": "rated",
+      "avgRating": "your average",
+      "topGenre": "top genre",
+      "topDirector": "top director",
+      "favourite": "movie of the year",
+      "traitsTitle": "your year in eight words",
+      "none": "—"
+    },
+    "credits": {
+      "incompleteBody": "{count} movies don't have TMDB data yet: three cards stay locked without it.",
+      "enrichCta": "finish the analysis",
+      "enriching": "TMDB analysis {done}/{total} movies",
+      "cancel": "cancel",
+      "errorConfig": "TMDB_API_KEY is not configured on the server: add it to .env.local and restart the dev server.",
+      "errorGeneric": "Analysis failed. Check your connection and try again.",
+      "retry": "retry",
+      "loading": "loading…"
+    }
   },
   "toast": {
     "regionLabel": "Notifications",

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { locales } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/types";
 
 function withLocale(pathname: string, lang: string) {
   const segments = pathname.split("/");
@@ -10,12 +11,13 @@ function withLocale(pathname: string, lang: string) {
   return segments.join("/") || `/${lang}`;
 }
 
-export function NavBar({ lang, dict }: { lang: string; dict: { home: string; upload: string; dashboard: string } }) {
+export function NavBar({ lang, dict }: { lang: string; dict: Dictionary["nav"] }) {
   const pathname = usePathname();
   const links = [
     { href: `/${lang}`, label: dict.home },
     { href: `/${lang}/upload`, label: dict.upload },
     { href: `/${lang}/dashboard`, label: dict.dashboard },
+    { href: `/${lang}/wrapped`, label: dict.wrapped },
   ];
 
   return (
