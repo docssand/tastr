@@ -88,15 +88,6 @@
     "items": "elementi",
     "period": "periodo",
     "source": "fonte",
-    "widgetsEyebrow": "// dashboard",
-    "comingSoon": "in arrivo",
-    "widgets": [
-      "Voto medio",
-      "Visioni per anno",
-      "Rewatch",
-      "Durata totale",
-      "Streak di visione"
-    ],
     "charts": {
       "title": "grafici",
       "tabDecade": "per decennio",
