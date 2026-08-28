@@ -1,5 +1,5 @@
 import { CREDITS_STORE, LOOKUP_STORE, idbGetMany, idbPutMany, isIdbAvailable } from "@/lib/idb";
-import { getMovieCredits, isFatalTmdbError, searchMovie } from "@/lib/tmdb";
+import { getMovieDetails, isFatalTmdbError, searchMovie } from "@/lib/tmdb";
 import { normalizeTitle, type WatchedMovie } from "@/lib/analysis/movies";
 import type { MovieCredits } from "@/lib/types";
 
@@ -78,7 +78,11 @@ export async function readCachedCredits(movies: WatchedMovie[]): Promise<Credits
   }
 
   const cachedCredits = await safeGetMany<MovieCredits>(CREDITS_STORE, Array.from(ids));
-  cachedCredits.forEach((value, key) => snapshot.credits.set(key as number, value));
+  cachedCredits.forEach((value, key) => {
+    // Le cache scritte prima dell'introduzione di generi/voto TMDB non hanno `genres`:
+    // trattarle come assenti forza un refetch che le completa, invece di lasciarle monche.
+    if (value.genres !== undefined) snapshot.credits.set(key as number, value);
+  });
 
   return snapshot;
 }
@@ -126,15 +130,17 @@ async function resolveTmdbId(movie: WatchedMovie, signal?: AbortSignal): Promise
 }
 
 async function fetchCredits(tmdbId: number, signal?: AbortSignal): Promise<MovieCredits> {
-  const response = await getMovieCredits(tmdbId, signal);
+  const response = await getMovieDetails(tmdbId, signal);
   return {
     tmdbId,
-    directors: (response.crew ?? [])
+    directors: (response.credits?.crew ?? [])
       .filter((c) => c.job === "Director")
       .map((c) => ({ id: c.id, name: c.name })),
-    cast: (response.cast ?? [])
+    cast: (response.credits?.cast ?? [])
       .slice(0, CAST_LIMIT)
       .map((c) => ({ id: c.id, name: c.name, order: c.order })),
+    genres: (response.genres ?? []).map((g) => g.name),
+    voteAverage: typeof response.vote_average === "number" ? response.vote_average : undefined,
     fetchedAt: new Date().toISOString(),
   };
 }

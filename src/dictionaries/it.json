@@ -91,13 +91,26 @@
     "widgetsEyebrow": "// dashboard",
     "comingSoon": "in arrivo",
     "widgets": [
-      "Top generi",
       "Voto medio",
       "Visioni per anno",
       "Rewatch",
       "Durata totale",
       "Streak di visione"
     ],
+    "charts": {
+      "title": "grafici",
+      "tabDecade": "per decennio",
+      "tabCompare": "tu vs la massa",
+      "tabGenre": "per genere",
+      "decadeLabel": "anni {decade}",
+      "decadeEmpty": "Nessun film con anno noto.",
+      "genreEmpty": "Nessun genere disponibile: completa l'analisi per generare il grafico.",
+      "compareEmpty": "Nessun film con sia il tuo voto sia un voto TMDB da confrontare.",
+      "loading": "caricamento…",
+      "compareSummary": "Scarto medio dalla massa: {delta}, su {count} film confrontati.",
+      "you": "tu",
+      "crowd": "massa (TMDB)"
+    },
     "topPeople": {
       "title": "top 10 registi e attori",
       "directors": "registi",
