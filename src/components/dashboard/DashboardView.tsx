@@ -12,7 +12,6 @@ import { Panel } from "@/components/ui/Panel";
 import { StatCard } from "@/components/ui/StatCard";
 import { Badge } from "@/components/ui/Badge";
 import { Button, LinkButton } from "@/components/ui/Button";
-import { WidgetCard } from "@/components/dashboard/WidgetCard";
 import { TopPeoplePanel } from "@/components/dashboard/TopPeoplePanel";
 import { ChartsPanel } from "@/components/dashboard/ChartsPanel";
 import type { Dictionary } from "@/i18n/types";
@@ -78,15 +77,6 @@ export function DashboardView({ lang, dict }: DashboardViewProps) {
       <TopPeoplePanel lang={lang} entries={result.entries} dict={dict.topPeople} />
 
       <ChartsPanel lang={lang} entries={result.entries} dict={dict} />
-
-      <div>
-        <div className="mb-4 text-xs uppercase tracking-widest text-muted">{dict.widgetsEyebrow}</div>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {dict.widgets.map((title) => (
-            <WidgetCard key={title} title={title} comingSoon={dict.comingSoon} />
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

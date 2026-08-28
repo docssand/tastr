@@ -88,15 +88,6 @@
     "items": "items",
     "period": "period",
     "source": "source",
-    "widgetsEyebrow": "// dashboard",
-    "comingSoon": "coming soon",
-    "widgets": [
-      "Average rating",
-      "Views per year",
-      "Rewatches",
-      "Total duration",
-      "Watch streak"
-    ],
     "charts": {
       "title": "charts",
       "tabDecade": "by decade",
