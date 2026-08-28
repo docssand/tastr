@@ -445,6 +445,13 @@
       "errorGeneric": "Analysis failed. Check your connection and try again.",
       "retry": "retry",
       "loading": "loading…"
+    },
+    "deck": {
+      "previous": "back",
+      "next": "next",
+      "restart": "start over",
+      "hint": "drag the card left or right — either way moves you on",
+      "position": "card {index} of {total}"
     }
   },
   "toast": {

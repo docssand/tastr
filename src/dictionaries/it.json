@@ -445,6 +445,13 @@
       "errorGeneric": "Analisi non riuscita. Controlla la connessione e riprova.",
       "retry": "riprova",
       "loading": "caricamento…"
+    },
+    "deck": {
+      "previous": "indietro",
+      "next": "avanti",
+      "restart": "ricomincia",
+      "hint": "trascina la scheda a destra o a sinistra — in entrambi i casi vai avanti",
+      "position": "scheda {index} di {total}"
     }
   },
   "toast": {

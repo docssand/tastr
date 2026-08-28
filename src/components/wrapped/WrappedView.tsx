@@ -15,6 +15,8 @@ import type { Dictionary } from "@/i18n/types";
 import type { NormalizedEntry } from "@/lib/types";
 import { WrappedCardPanel, wrappedFormatters } from "@/components/wrapped/WrappedCardPanel";
 import { WrappedSummaryPanel } from "@/components/wrapped/WrappedSummaryPanel";
+import { WrappedDeck } from "@/components/wrapped/WrappedDeck";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 
 type WrappedDict = Dictionary["wrapped"];
 
@@ -124,6 +126,8 @@ function YearPicker({
 function WrappedContent({ lang, entries, dict }: { lang: string; entries: NormalizedEntry[]; dict: WrappedDict }) {
   const credits = useMovieCredits(entries);
   const [picked, setPicked] = useState<number | null>(null);
+  // Sotto il breakpoint delle due colonne le schede diventano un mazzo: una alla volta, da trascinare.
+  const isWide = useMediaQuery("(min-width: 768px)");
 
   const years = useMemo(() => watchYears(entries), [entries]);
   // Fissato al primo render: il ritmo dell'anno in corso dipende dal mese, non deve cambiare a metà pagina.
@@ -151,6 +155,19 @@ function WrappedContent({ lang, entries, dict }: { lang: string; entries: Normal
 
   const creditsIncomplete = credits.status !== "ready";
 
+  const cards = report.cards.map((card, i) => (
+    <WrappedCardPanel
+      key={card.id}
+      card={card}
+      index={i + 1}
+      total={report.cards.length}
+      year={report.year}
+      creditsIncomplete={creditsIncomplete}
+      dict={dict}
+      format={format}
+    />
+  ));
+
   return (
     <div className="flex flex-col gap-10">
       <Panel title={dict.yearsLabel}>
@@ -168,25 +185,22 @@ function WrappedContent({ lang, entries, dict }: { lang: string; entries: Normal
 
       {credits.status === "loading" ? (
         <p className="text-sm text-muted">{dict.credits.loading}</p>
-      ) : (
+      ) : isWide ? (
         <>
           <div className="grid gap-x-6 gap-y-12 md:grid-cols-2">
-            {report.cards.map((card, i) => (
-              <WrappedCardPanel
-                key={card.id}
-                card={card}
-                index={i + 1}
-                total={report.cards.length}
-                year={report.year}
-                creditsIncomplete={creditsIncomplete}
-                dict={dict}
-                format={format}
-              />
-            ))}
+            {cards}
           </div>
 
           <WrappedSummaryPanel report={report} dict={dict} format={format} />
         </>
+      ) : (
+        // Cambiare anno rimescola il mazzo: la key lo riporta alla prima scheda.
+        <WrappedDeck key={report.year} dict={dict.deck}>
+          {[
+            ...cards,
+            <WrappedSummaryPanel key="summary" report={report} dict={dict} format={format} className="h-full" />,
+          ]}
+        </WrappedDeck>
       )}
     </div>
   );

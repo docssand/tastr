@@ -53,17 +53,19 @@ export function WrappedSummaryPanel({
   report,
   dict,
   format,
+  className,
 }: {
   report: WrappedReport;
   dict: WrappedDict;
   format: WrappedFormatters;
+  className?: string;
 }) {
   const { summary } = report;
   const archetype = dict.archetypes[summary.archetype];
   const none = dict.summary.none;
 
   return (
-    <Panel title={dict.summary.title} tag={dict.summary.tag}>
+    <Panel title={dict.summary.title} tag={dict.summary.tag} className={className}>
       <div className="text-xs uppercase tracking-widest text-muted">{report.year}</div>
       <p className="mt-4 bracket-label text-3xl text-accent text-glow">{archetype.name}</p>
       <p className="mt-4 max-w-2xl text-sm leading-relaxed text-foreground/90">{archetype.body}</p>
