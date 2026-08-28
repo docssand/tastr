@@ -1,0 +1,147 @@
+{
+  "nav": {
+    "home": "home",
+    "upload": "upload",
+    "dashboard": "dashboard"
+  },
+  "footer": "local-first · i tuoi dati restano nel browser · v0.1.0",
+  "meta": {
+    "title": "Tastr",
+    "description": "Scopri i tuoi gusti cinematografici a partire dai tuoi dati di Trakt, Letterboxd o Bingers.",
+    "dashboardTitle": "dashboard — Tastr",
+    "uploadTitle": "upload — Tastr"
+  },
+  "home": {
+    "eyebrow": "// analisi dei gusti cinematografici",
+    "title": ["Il tuo profilo cinema,", "letto dai tuoi dati."],
+    "lead": "Carica l'export della tua cronologia di visione e scopri registi, generi e attori che ami davvero — elaborato interamente a partire dai dati che già possiedi.",
+    "ctaPrimary": "carica il tuo export",
+    "ctaSecondary": "vai alla dashboard",
+    "steps": [
+      {
+        "n": "01",
+        "title": "Esporta i tuoi dati",
+        "body": "Scarica il file .zip con la cronologia dei tuoi film e serie da Trakt, Letterboxd o Bingers."
+      },
+      {
+        "n": "02",
+        "title": "Carica l'archivio",
+        "body": "Trascina lo zip nella pagina di upload: il sistema riconosce automaticamente il servizio di origine."
+      },
+      {
+        "n": "03",
+        "title": "Esplora i tuoi gusti",
+        "body": "Analizziamo i dati con TMDB e generiamo dashboard su registi, generi e abitudini di visione preferiti."
+      }
+    ],
+    "statusTitle": "stato del progetto",
+    "statusBodyPrefix": "Import manuale disponibile ora. Sincronizzazione automatica con Trakt e altri servizi in arrivo. Dati arricchiti tramite",
+    "statusBodySuffix": "."
+  },
+  "upload": {
+    "eyebrow": "// import dati",
+    "title": "Carica il tuo export",
+    "lead": "Supportiamo l'archivio .zip esportato da Trakt, Letterboxd o Bingers. Il servizio di origine viene riconosciuto automaticamente: non serve specificarlo.",
+    "dropzone": "> trascina qui il file .zip",
+    "dropzoneAlt": "oppure clicca per selezionarlo",
+    "logTitle": "log",
+    "readingArchive": "> lettura archivio \"{name}\"...",
+    "detectingSource": "> rilevamento fonte dei dati...",
+    "noSourceRecognized": "> nessun servizio riconosciuto per questo archivio.",
+    "sourceDetected": "> fonte rilevata: {source}",
+    "normalizing": "> normalizzazione dei dati...",
+    "itemsImported": "> {count} elementi importati.",
+    "warningPrefix": "> attenzione: {message}",
+    "enrichStart": "> analisi regia e cast su TMDB ({count} film)...",
+    "enrichProgress": "> analisi credits {done}/{total} film...",
+    "enrichDone": "> credits disponibili per {count} film.",
+    "enrichCached": "> credits già in cache locale.",
+    "enrichSkipped": "> analisi credits saltata: TMDB_API_KEY non configurata sul server.",
+    "enrichFailed": "> analisi credits interrotta: la puoi completare dalla dashboard.",
+    "ready": "> pronto.",
+    "notZip": "> errore: \"{name}\" non è un archivio .zip",
+    "errorPrefix": "> errore: {message}",
+    "processingFailed": "elaborazione fallita",
+    "importCompleteTitle": "import completato",
+    "importCompleteTag": "ok",
+    "items": "{count} elementi",
+    "goToDashboard": "vai alla dashboard",
+    "importFailedTitle": "import non riuscito",
+    "importFailedTag": "errore",
+    "formatNotRecognized": "Formato non riconosciuto. Al momento supportiamo export da Trakt, Letterboxd e Bingers.",
+    "retry": "riprova",
+    "toastSuccessTitle": "import completato",
+    "toastSuccessBody": "{count} elementi importati da {source}.",
+    "toastWarningsTitle": "import con avvisi",
+    "toastWarningsBody": "L'import è terminato con {count} avvisi: controlla il log.",
+    "toastErrorTitle": "import non riuscito",
+    "toastNotZipBody": "\"{name}\" non è un archivio .zip."
+  },
+  "dashboard": {
+    "eyebrow": "// il tuo profilo",
+    "title": "Dashboard",
+    "emptyTitle": "nessun import trovato",
+    "emptyBody": "Non abbiamo ancora dati da mostrare. Carica un export per generare la tua dashboard.",
+    "emptyCta": "carica un export",
+    "activeImportTitle": "import attivo",
+    "newImport": "nuovo import",
+    "items": "elementi",
+    "period": "periodo",
+    "source": "fonte",
+    "widgetsEyebrow": "// dashboard",
+    "comingSoon": "in arrivo",
+    "widgets": [
+      "Top generi",
+      "Voto medio",
+      "Visioni per anno",
+      "Rewatch",
+      "Durata totale",
+      "Streak di visione"
+    ],
+    "topPeople": {
+      "title": "top 10 registi e attori",
+      "directors": "registi",
+      "actors": "attori",
+      "coverage": "{covered}/{total} film con credits",
+      "incompleteBody": "{count} film non hanno ancora i credits TMDB.",
+      "enrichCta": "completa l'analisi",
+      "enriching": "analisi credits {done}/{total} film",
+      "cancel": "annulla",
+      "errorConfig": "TMDB_API_KEY non configurata sul server: aggiungila a .env.local e riavvia il server di sviluppo.",
+      "errorGeneric": "Analisi non riuscita. Controlla la connessione e riprova.",
+      "retry": "riprova",
+      "empty": "Nessun film con credits disponibili: completa l'analisi per generare la classifica.",
+      "movies": "{count} film",
+      "rating": "media {avg} ({delta})",
+      "noRating": "nessun voto",
+      "rewatches": "{count} rewatch",
+      "expand": "mostra i film di {name}",
+      "collapse": "nascondi i film di {name}",
+      "filmsHeader": "film",
+      "filmsRating": "voto",
+      "filmsPlays": "visioni",
+      "filmsNoRating": "—",
+      "filmsPlaysValue": "{count}×",
+      "legendToggle": "come si calcola",
+      "legend": "score = log₂(1 + esposizione) × qualità. L'esposizione conta i film distinti — per gli attori pesati in base alla posizione in locandina — e cresce del {rewatch}% per ogni rewatch. La qualità è lo scarto medio dei tuoi voti dalla tua media di {mean}, attenuato aggiungendo {k} voti fantasma pari alla media: così un solo voto altissimo su un film pesa meno di molti voti sopra la media su molti film."
+    },
+    "toastClearedTitle": "import rimosso",
+    "toastClearedBody": "I dati locali sono stati cancellati. Carica un nuovo export per rigenerare la dashboard."
+  },
+  "toast": {
+    "regionLabel": "Notifiche",
+    "close": "Chiudi notifica",
+    "tone": {
+      "success": "ok",
+      "error": "err",
+      "info": "info"
+    }
+  },
+  "warnings": {
+    "traktUnreadableJson": "Impossibile leggere {file} come JSON.",
+    "traktNoEntries": "Nessun elemento riconosciuto nei file JSON dell'export Trakt.",
+    "letterboxdNoDiary": "Nessun file diary.csv o watched.csv trovato: elenco dei film non disponibile.",
+    "bingersNoWatches": "Nessun file watches.csv trovato: cronologia delle visioni non disponibile.",
+    "bingersNoEntries": "Nessun elemento trovato in watches.csv o ratings.csv."
+  }
+}

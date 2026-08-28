@@ -1,0 +1,147 @@
+{
+  "nav": {
+    "home": "home",
+    "upload": "upload",
+    "dashboard": "dashboard"
+  },
+  "footer": "local-first · your data stays in the browser · v0.1.0",
+  "meta": {
+    "title": "Tastr",
+    "description": "Discover your movie taste from your Trakt, Letterboxd, or Bingers data.",
+    "dashboardTitle": "dashboard — Tastr",
+    "uploadTitle": "upload — Tastr"
+  },
+  "home": {
+    "eyebrow": "// movie taste analysis",
+    "title": ["Your movie profile,", "read from your data."],
+    "lead": "Upload your watch history export and discover the directors, genres, and actors you truly love — computed entirely from data you already own.",
+    "ctaPrimary": "upload your export",
+    "ctaSecondary": "go to dashboard",
+    "steps": [
+      {
+        "n": "01",
+        "title": "Export your data",
+        "body": "Download the .zip with your movie and show history from Trakt, Letterboxd, or Bingers."
+      },
+      {
+        "n": "02",
+        "title": "Upload the archive",
+        "body": "Drop the zip on the upload page: the system automatically recognizes the source service."
+      },
+      {
+        "n": "03",
+        "title": "Explore your taste",
+        "body": "We analyze the data with TMDB and generate dashboards on your favorite directors, genres, and viewing habits."
+      }
+    ],
+    "statusTitle": "project status",
+    "statusBodyPrefix": "Manual import available now. Automatic sync with Trakt and other services is coming soon. Data enriched via",
+    "statusBodySuffix": "."
+  },
+  "upload": {
+    "eyebrow": "// data import",
+    "title": "Upload your export",
+    "lead": "We support the .zip archive exported from Trakt, Letterboxd, or Bingers. The source service is detected automatically: no need to specify it.",
+    "dropzone": "> drop the .zip file here",
+    "dropzoneAlt": "or click to select it",
+    "logTitle": "log",
+    "readingArchive": "> reading archive \"{name}\"...",
+    "detectingSource": "> detecting data source...",
+    "noSourceRecognized": "> no service recognized for this archive.",
+    "sourceDetected": "> source detected: {source}",
+    "normalizing": "> normalizing data...",
+    "itemsImported": "> {count} items imported.",
+    "warningPrefix": "> warning: {message}",
+    "enrichStart": "> analyzing directors and cast on TMDB ({count} movies)...",
+    "enrichProgress": "> credits analysis {done}/{total} movies...",
+    "enrichDone": "> credits available for {count} movies.",
+    "enrichCached": "> credits already in local cache.",
+    "enrichSkipped": "> credits analysis skipped: TMDB_API_KEY is not configured on the server.",
+    "enrichFailed": "> credits analysis interrupted: you can finish it from the dashboard.",
+    "ready": "> ready.",
+    "notZip": "> error: \"{name}\" is not a .zip archive",
+    "errorPrefix": "> error: {message}",
+    "processingFailed": "processing failed",
+    "importCompleteTitle": "import complete",
+    "importCompleteTag": "ok",
+    "items": "{count} items",
+    "goToDashboard": "go to dashboard",
+    "importFailedTitle": "import failed",
+    "importFailedTag": "error",
+    "formatNotRecognized": "Format not recognized. We currently support exports from Trakt, Letterboxd, and Bingers.",
+    "retry": "retry",
+    "toastSuccessTitle": "import complete",
+    "toastSuccessBody": "{count} items imported from {source}.",
+    "toastWarningsTitle": "import with warnings",
+    "toastWarningsBody": "The import finished with {count} warnings: check the log.",
+    "toastErrorTitle": "import failed",
+    "toastNotZipBody": "\"{name}\" is not a .zip archive."
+  },
+  "dashboard": {
+    "eyebrow": "// your profile",
+    "title": "Dashboard",
+    "emptyTitle": "no import found",
+    "emptyBody": "We don't have any data to show yet. Upload an export to generate your dashboard.",
+    "emptyCta": "upload an export",
+    "activeImportTitle": "active import",
+    "newImport": "new import",
+    "items": "items",
+    "period": "period",
+    "source": "source",
+    "widgetsEyebrow": "// dashboard",
+    "comingSoon": "coming soon",
+    "widgets": [
+      "Top genres",
+      "Average rating",
+      "Views per year",
+      "Rewatches",
+      "Total duration",
+      "Watch streak"
+    ],
+    "topPeople": {
+      "title": "top 10 directors and actors",
+      "directors": "directors",
+      "actors": "actors",
+      "coverage": "{covered}/{total} movies with credits",
+      "incompleteBody": "{count} movies don't have TMDB credits yet.",
+      "enrichCta": "finish the analysis",
+      "enriching": "credits analysis {done}/{total} movies",
+      "cancel": "cancel",
+      "errorConfig": "TMDB_API_KEY is not configured on the server: add it to .env.local and restart the dev server.",
+      "errorGeneric": "Analysis failed. Check your connection and try again.",
+      "retry": "retry",
+      "empty": "No movies with credits available: finish the analysis to build the ranking.",
+      "movies": "{count} movies",
+      "rating": "avg {avg} ({delta})",
+      "noRating": "no rating",
+      "rewatches": "{count} rewatches",
+      "expand": "show {name}'s movies",
+      "collapse": "hide {name}'s movies",
+      "filmsHeader": "movie",
+      "filmsRating": "rating",
+      "filmsPlays": "views",
+      "filmsNoRating": "—",
+      "filmsPlaysValue": "{count}×",
+      "legendToggle": "how it's computed",
+      "legend": "score = log₂(1 + exposure) × quality. Exposure counts distinct movies — weighted by billing position for actors — and grows {rewatch}% per rewatch. Quality is how far your ratings sit from your {mean} average, damped by adding {k} phantom ratings at the average: that way a single very high rating on one movie weighs less than many above-average ratings across many movies."
+    },
+    "toastClearedTitle": "import cleared",
+    "toastClearedBody": "Local data has been removed. Upload a new export to rebuild your dashboard."
+  },
+  "toast": {
+    "regionLabel": "Notifications",
+    "close": "Dismiss notification",
+    "tone": {
+      "success": "ok",
+      "error": "err",
+      "info": "info"
+    }
+  },
+  "warnings": {
+    "traktUnreadableJson": "Unable to read {file} as JSON.",
+    "traktNoEntries": "No items recognized in the Trakt export JSON files.",
+    "letterboxdNoDiary": "No diary.csv or watched.csv file found: movie list unavailable.",
+    "bingersNoWatches": "No watches.csv file found: viewing history unavailable.",
+    "bingersNoEntries": "No items found in watches.csv or ratings.csv."
+  }
+}

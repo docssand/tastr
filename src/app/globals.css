@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+:root {
+  --background: #090c09;
+  --surface: #0f130f;
+  --surface-raised: #151a14;
+  --border: #232b21;
+  --border-strong: #37452f;
+  --foreground: #e6f1e1;
+  --muted: #7d8f76;
+  --accent: #4ade80;
+  --accent-strong: #8bffb0;
+  --accent-amber: #f0b429;
+  --danger: #f87171;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-amber: var(--accent-amber);
+  --color-danger: var(--danger);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  color: var(--color-foreground);
+}
+
+/* Sovrapposizione scanline molto sottile per l'estetica CRT, senza compromettere la leggibilità */
+.crt-overlay {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.028),
+    rgba(255, 255, 255, 0.028) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.6;
+}
+
+.text-glow {
+  text-shadow: 0 0 10px color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.cursor-blink {
+  animation: blink 1.1s step-end infinite;
+}
+
+.bracket-label::before {
+  content: "[ ";
+  opacity: 0.5;
+}
+
+.bracket-label::after {
+  content: " ]";
+  opacity: 0.5;
+}
+
+/* Toast: entrata/uscita brevi e barra del countdown, in stile terminale */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.toast-in {
+  animation: toast-in 160ms ease-out;
+}
+
+.toast-out {
+  animation: toast-out 180ms ease-in forwards;
+}
+
+.toast-progress {
+  animation-name: toast-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-in,
+  .toast-out {
+    animation-duration: 1ms;
+  }
+
+  .toast-progress {
+    animation: none;
+    transform: scaleX(1);
+  }
+
+  .cursor-blink {
+    animation: none;
+  }
+}
