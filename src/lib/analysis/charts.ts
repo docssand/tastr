@@ -12,13 +12,20 @@ function decadeOf(year: number) {
   return Math.floor(year / 10) * 10;
 }
 
+function yearOf(movie: WatchedMovie, credits: Map<number, MovieCredits>): number | undefined {
+  // Alcune sorgenti di import (es. Bingers) non includono l'anno di uscita: si ripiega
+  // sulla release_date TMDB, disponibile solo dopo l'arricchimento dei credits.
+  return movie.year ?? (movie.tmdbId ? credits.get(movie.tmdbId)?.year : undefined);
+}
+
 /** Film distinti per decennio d'uscita, con la media dei voti dati a quel decennio. */
-export function decadeStats(movies: WatchedMovie[]): DecadeStat[] {
+export function decadeStats(movies: WatchedMovie[], credits: Map<number, MovieCredits>): DecadeStat[] {
   const byDecade = new Map<number, { count: number; ratingSum: number; ratedCount: number }>();
 
   for (const movie of movies) {
-    if (movie.year === undefined) continue;
-    const decade = decadeOf(movie.year);
+    const year = yearOf(movie, credits);
+    if (year === undefined) continue;
+    const decade = decadeOf(year);
     const bucket = byDecade.get(decade) ?? { count: 0, ratingSum: 0, ratedCount: 0 };
     bucket.count += 1;
     if (typeof movie.rating === "number") {
@@ -93,11 +100,13 @@ export function compareByDecade(movies: WatchedMovie[], credits: Map<number, Mov
   const byDecade = new Map<number, { personalSum: number; massSum: number; count: number }>();
 
   for (const movie of movies) {
-    if (typeof movie.rating !== "number" || movie.year === undefined || !movie.tmdbId) continue;
+    if (typeof movie.rating !== "number" || !movie.tmdbId) continue;
     const info = credits.get(movie.tmdbId);
     if (!info || typeof info.voteAverage !== "number") continue;
+    const year = yearOf(movie, credits);
+    if (year === undefined) continue;
 
-    const decade = decadeOf(movie.year);
+    const decade = decadeOf(year);
     const bucket = byDecade.get(decade) ?? { personalSum: 0, massSum: 0, count: 0 };
     bucket.personalSum += movie.rating;
     bucket.massSum += info.voteAverage;

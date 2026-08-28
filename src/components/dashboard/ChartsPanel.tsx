@@ -239,7 +239,7 @@ export function ChartsPanel({ lang, entries, dict }: ChartsPanelProps) {
     return { rating, delta };
   }, [lang]);
 
-  const decades = useMemo(() => decadeStats(movies), [movies]);
+  const decades = useMemo(() => decadeStats(movies, credits), [movies, credits]);
   const genres = useMemo(() => genreStats(movies, credits), [movies, credits]);
   const compareDecades = useMemo(() => compareByDecade(movies, credits), [movies, credits]);
 

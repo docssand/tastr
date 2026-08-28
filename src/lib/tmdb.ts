@@ -38,6 +38,7 @@ export interface TmdbMovieDetailsResponse {
   id: number;
   genres?: TmdbGenre[];
   vote_average?: number;
+  release_date?: string;
   credits?: TmdbCreditsResponse;
 }
 
