@@ -91,13 +91,26 @@
     "widgetsEyebrow": "// dashboard",
     "comingSoon": "coming soon",
     "widgets": [
-      "Top genres",
       "Average rating",
       "Views per year",
       "Rewatches",
       "Total duration",
       "Watch streak"
     ],
+    "charts": {
+      "title": "charts",
+      "tabDecade": "by decade",
+      "tabCompare": "you vs the crowd",
+      "tabGenre": "by genre",
+      "decadeLabel": "{decade}s",
+      "decadeEmpty": "No movies with a known year.",
+      "genreEmpty": "No genres available yet: finish the analysis to build the chart.",
+      "compareEmpty": "No movies with both your rating and a TMDB rating to compare.",
+      "loading": "loading…",
+      "compareSummary": "Average delta from the crowd: {delta}, across {count} movies compared.",
+      "you": "you",
+      "crowd": "crowd (TMDB)"
+    },
     "topPeople": {
       "title": "top 10 directors and actors",
       "directors": "directors",

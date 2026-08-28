@@ -29,6 +29,18 @@ export interface TmdbCreditsResponse {
   crew?: TmdbCrewMember[];
 }
 
+export interface TmdbGenre {
+  id: number;
+  name: string;
+}
+
+export interface TmdbMovieDetailsResponse {
+  id: number;
+  genres?: TmdbGenre[];
+  vote_average?: number;
+  credits?: TmdbCreditsResponse;
+}
+
 /** Errore che espone lo status HTTP, così il chiamante distingue "chiave mancante" da "film non trovato". */
 export class TmdbError extends Error {
   constructor(
@@ -94,6 +106,7 @@ export function searchMovie(title: string, year?: number, signal?: AbortSignal) 
   return tmdbFetch<TmdbSearchResponse>("search/movie", params, signal);
 }
 
-export function getMovieCredits(tmdbId: number, signal?: AbortSignal) {
-  return tmdbFetch<TmdbCreditsResponse>(`movie/${tmdbId}/credits`, {}, signal);
+/** `append_to_response=credits` evita una seconda chiamata per generi/voto e cast/regia. */
+export function getMovieDetails(tmdbId: number, signal?: AbortSignal) {
+  return tmdbFetch<TmdbMovieDetailsResponse>(`movie/${tmdbId}`, { append_to_response: "credits" }, signal);
 }

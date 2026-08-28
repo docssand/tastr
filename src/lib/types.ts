@@ -52,6 +52,9 @@ export interface MovieCredits {
   tmdbId: number;
   directors: CreditPerson[];
   cast: CreditPerson[];
+  genres: string[];
+  /** Voto medio pubblico TMDB, scala 0-10 come il voto personale. */
+  voteAverage?: number;
   fetchedAt: string;
 }
 

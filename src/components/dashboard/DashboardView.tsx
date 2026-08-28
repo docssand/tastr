@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { WidgetCard } from "@/components/dashboard/WidgetCard";
 import { TopPeoplePanel } from "@/components/dashboard/TopPeoplePanel";
+import { ChartsPanel } from "@/components/dashboard/ChartsPanel";
 import type { Dictionary } from "@/i18n/types";
 import { useToast } from "@/components/ui/toast/ToastProvider";
 
@@ -75,6 +76,8 @@ export function DashboardView({ lang, dict }: DashboardViewProps) {
       </Panel>
 
       <TopPeoplePanel lang={lang} entries={result.entries} dict={dict.topPeople} />
+
+      <ChartsPanel lang={lang} entries={result.entries} dict={dict} />
 
       <div>
         <div className="mb-4 text-xs uppercase tracking-widest text-muted">{dict.widgetsEyebrow}</div>
