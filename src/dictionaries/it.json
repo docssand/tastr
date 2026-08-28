@@ -2,14 +2,16 @@
   "nav": {
     "home": "home",
     "upload": "upload",
-    "dashboard": "dashboard"
+    "dashboard": "dashboard",
+    "wrapped": "wrapped"
   },
   "footer": "local-first · i tuoi dati restano nel browser · v0.1.0",
   "meta": {
     "title": "Tastr",
     "description": "Scopri i tuoi gusti cinematografici a partire dai tuoi dati di Trakt, Letterboxd o Bingers.",
     "dashboardTitle": "dashboard — Tastr",
-    "uploadTitle": "upload — Tastr"
+    "uploadTitle": "upload — Tastr",
+    "wrappedTitle": "wrapped — Tastr"
   },
   "home": {
     "eyebrow": "// analisi dei gusti cinematografici",
@@ -131,6 +133,326 @@
     },
     "toastClearedTitle": "import rimosso",
     "toastClearedBody": "I dati locali sono stati cancellati. Carica un nuovo export per rigenerare la dashboard."
+  },
+  "wrapped": {
+    "eyebrow": "// l'anno in schede",
+    "title": "Wrapped",
+    "lead": "Otto schede e un verdetto su come hai visto i film, ricostruiti per ogni anno della tua cronologia.",
+    "emptyTitle": "nessun import trovato",
+    "emptyBody": "Non abbiamo ancora dati da mostrare. Carica un export per generare il tuo Wrapped.",
+    "emptyCta": "carica un export",
+    "noYearsTitle": "nessuna visione con data",
+    "noYearsBody": "Nel tuo import non c'è nessun film con una data di visione, quindi non c'è nessun anno da riassumere. Gli export di Trakt, Letterboxd e Bingers di solito la includono.",
+    "yearsLabel": "anno",
+    "inProgress": "in corso",
+    "cardCounter": "{index} / {total}",
+    "notEnough": "Troppi pochi film visti nel {year} per dare un verdetto.",
+    "needsCredits": "Questa scheda ha bisogno dei dati TMDB: completa l'analisi per sbloccarla.",
+    "yearSummary": "{movies} film · {viewings} visioni · {rated} votati",
+    "cards": {
+      "rating": {
+        "title": "come voti",
+        "prompt": "Film vecchi o nuovi: a chi dai i voti più alti?"
+      },
+      "watching": {
+        "title": "cosa guardi",
+        "prompt": "Metti in coda le novità o il catalogo?"
+      },
+      "focus": {
+        "title": "quanto scavi",
+        "prompt": "Vai a fondo in poche cose o assaggi tutto una volta?"
+      },
+      "crowd": {
+        "title": "tu e la massa",
+        "prompt": "I tuoi voti seguono quello che pensano tutti gli altri?"
+      },
+      "genres": {
+        "title": "i tuoi due generi",
+        "prompt": "La coppia che hai visto di più, e l'animale che ne esce."
+      },
+      "reviewer": {
+        "title": "recensore o lurker",
+        "prompt": "Quanto di ciò che vedi finisci davvero per votare?"
+      },
+      "rhythm": {
+        "title": "il tuo ritmo",
+        "prompt": "Distribuito su tutto l'anno o tutto in poche settimane?"
+      },
+      "rewatch": {
+        "title": "di nuovo, o mai più",
+        "prompt": "Quanto del tuo anno è andato a film che già conoscevi?"
+      }
+    },
+    "verdicts": {
+      "nostalgic": {
+        "name": "Nostalgico",
+        "body": "Più il film è vecchio, più il voto sale. I tuoi voti migliori stanno nel catalogo."
+      },
+      "modern": {
+        "name": "Moderno",
+        "body": "Le uscite recenti prendono i tuoi voti più alti. Quello che è appena uscito è quello che ti convince."
+      },
+      "gourmet": {
+        "name": "Buongustaio",
+        "body": "Ai tuoi voti non interessa l'anno. Vecchio o nuovo, giudichi il film che hai davanti."
+      },
+      "current": {
+        "name": "Aggiornato",
+        "body": "Quasi tutto quello che hai visto è appena uscito. Sei sul pezzo, in presa diretta."
+      },
+      "archivist": {
+        "name": "Archivista",
+        "body": "Il tuo anno lo passi nel catalogo: la maggior parte dei film che hai visto ha più di dieci anni."
+      },
+      "omnivore": {
+        "name": "Onnivoro",
+        "body": "Novità e vecchi titoli in dosi confrontabili. Non è l'anno d'uscita a farti scegliere."
+      },
+      "specialist": {
+        "name": "Specialista",
+        "body": "Scendi nella tana del bianconiglio: pochi generi, registi a cui torni, filmografie intere."
+      },
+      "curator": {
+        "name": "Curatore",
+        "body": "Hai i tuoi preferiti e li coltivi, ma tieni abbastanza spazio per quello che non hai mai provato."
+      },
+      "wanderer": {
+        "name": "Giramondo",
+        "body": "Non guardi quasi mai due volte di fila la stessa cosa. Ogni film arriva da un'altra parte."
+      },
+      "conformist": {
+        "name": "Conformista",
+        "body": "Quello che la massa chiama bello lo chiami bello anche tu. La tua classifica e quella di TMDB si muovono insieme."
+      },
+      "independent": {
+        "name": "Indipendente",
+        "body": "Con la massa ti sovrapponi, poi te ne allontani abbastanza spesso da restare interessante."
+      },
+      "contrarian": {
+        "name": "Bastian contrario",
+        "body": "Il consenso pubblico non dice quasi nulla sui tuoi voti. Giudichi per conto tuo."
+      },
+      "reviewer": {
+        "name": "Recensore",
+        "body": "Quasi niente ti passa davanti senza un voto. Guardare e giudicare per te sono lo stesso gesto."
+      },
+      "selective": {
+        "name": "Selettivo",
+        "body": "Voti quando un film si merita un'opinione, e lasci passare il resto senza segnarlo."
+      },
+      "lurker": {
+        "name": "Lurker",
+        "body": "Guardi molto e dici poco. La maggior parte del tuo anno non ha lasciato nessun voto."
+      },
+      "metronome": {
+        "name": "Metronomo",
+        "body": "Film quasi tutti i mesi, in dosi regolari. Il tuo anno non ha tratti vuoti."
+      },
+      "tidal": {
+        "name": "A ondate",
+        "body": "Vai e vieni a ondate: periodi fitti, poi silenzio, poi di nuovo."
+      },
+      "marathoner": {
+        "name": "Maratoneta",
+        "body": "Il tuo anno è concentrato in raffiche. Quando guardi, guardi tantissimo tutto insieme."
+      },
+      "ritualist": {
+        "name": "Ritualista",
+        "body": "Buona parte del tuo anno è andata a film che sapevi già a memoria. Il rewatch è il punto."
+      },
+      "loyalist": {
+        "name": "Affezionato",
+        "body": "Vai avanti quasi sempre, ma continui a tornare su una manciata di preferiti."
+      },
+      "pioneer": {
+        "name": "Esploratore",
+        "body": "Quasi ogni visione era una prima volta. Preferisci rischiare un titolo nuovo che rimettere una certezza."
+      }
+    },
+    "animals": {
+      "hawk": {
+        "name": "Falco",
+        "body": "Due generi, una marcia sola: a tutta velocità. Guardi film che si muovono, e li guardi per l'inseguimento."
+      },
+      "panther": {
+        "name": "Pantera",
+        "body": "Veloce e al buio. La caccia ti piace di più quando sullo schermo non ci si può fidare di nessuno."
+      },
+      "mustang": {
+        "name": "Mustang",
+        "body": "Vuoi la corsa, ma vuoi anche qualcuno a cui tenere mentre succede."
+      },
+      "dragon": {
+        "name": "Drago",
+        "body": "Niente di quello che guardi rispetta la fisica, e niente ha il tempo di spiegarsi."
+      },
+      "monkey": {
+        "name": "Scimmia",
+        "body": "Caos, ma divertente. I tuoi film corrono veloci e atterrano su una battuta."
+      },
+      "eagle": {
+        "name": "Aquila",
+        "body": "Guardi quello che è successo davvero, raccontato dall'alto e di corsa."
+      },
+      "raven": {
+        "name": "Corvo",
+        "body": "Passi le tue ore di cinema dove le luci sono spente e il movente non è chiaro."
+      },
+      "wolf": {
+        "name": "Lupo",
+        "body": "Cerchi la ferita sotto il delitto. Dai tuoi film non esce pulito nessuno."
+      },
+      "bat": {
+        "name": "Pipistrello",
+        "body": "Gli incubi li prendi inventati. Più il mondo è strano, più ti piace scuro."
+      },
+      "fox": {
+        "name": "Volpe",
+        "body": "Ridi nei punti sbagliati, di proposito. Commedia e crimine per te sono lo stesso trucco."
+      },
+      "owl": {
+        "name": "Gufo",
+        "body": "Guardi quello che è successo, e poi quello che nascondeva. Paziente, e sempre un po' sospettoso."
+      },
+      "swan": {
+        "name": "Cigno",
+        "body": "Sentimenti a tutto volume, con la colonna sonora sotto. Sei qui per il magone."
+      },
+      "deer": {
+        "name": "Cervo",
+        "body": "Vuoi commuoverti in un posto che non esiste: tenerezza, con il mondo ridisegnato."
+      },
+      "otter": {
+        "name": "Lontra",
+        "body": "Guardi film a cui le persone piacciono. Caldi, veloci e facili da rimettere."
+      },
+      "elephant": {
+        "name": "Elefante",
+        "body": "Tieni quello che è successo e quello che è costato. Memoria lunga, cuore pesante."
+      },
+      "octopus": {
+        "name": "Polpo",
+        "body": "Tutto quello che guardi è stato inventato da zero, e più diventa strano meglio è."
+      },
+      "dolphin": {
+        "name": "Delfino",
+        "body": "Immaginazione con il sorriso. Gli altri mondi ti piacciono ospitali."
+      },
+      "chameleon": {
+        "name": "Camaleonte",
+        "body": "Metà documentato, metà impossibile. Continui a cambiare idea su quale metà credere."
+      },
+      "meerkat": {
+        "name": "Suricato",
+        "body": "Guardi per stare meglio, possibilmente in compagnia, e non te ne scusi."
+      },
+      "raccoon": {
+        "name": "Procione",
+        "body": "Attraversi la vita vera cercandone il lato comico, e di solito lo trovi."
+      },
+      "tortoise": {
+        "name": "Tartaruga",
+        "body": "Guardi quello che è successo davvero, con calma, e te lo ricordi tutto."
+      }
+    },
+    "archetypes": {
+      "keeper": {
+        "name": "Il Custode",
+        "body": "Scavi a fondo in pochi angoli, e quello che ci trovi il mondo lo chiama già bello. Stai costruendo un canone, non discutendolo."
+      },
+      "scholar": {
+        "name": "Lo Studioso",
+        "body": "Segui generi e registi fino in fondo, e ne esci con un'opinione tua."
+      },
+      "cultist": {
+        "name": "Il Cultista",
+        "body": "Vai in profondità e torni con verdetti che non condivide nessuno. I tuoi preferiti sono solo tuoi."
+      },
+      "classicist": {
+        "name": "Il Classico",
+        "body": "Tieni una dieta larga e atterri vicino al consenso: un consiglio affidabile, raramente una sorpresa."
+      },
+      "cinephile": {
+        "name": "Il Cinefilo",
+        "body": "Raggio ampio, pagella tua. Hai visto abbastanza da poterti permettere di dissentire."
+      },
+      "heretic": {
+        "name": "L'Eretico",
+        "body": "Guardi un po' di tutto e non voti quasi niente come lo vota la massa."
+      },
+      "explorer": {
+        "name": "L'Esploratore",
+        "body": "Sei sempre da qualche parte di nuovo, e quando ci arrivi tendi ad apprezzare quello che è piaciuto a tutti."
+      },
+      "nomad": {
+        "name": "Il Nomade",
+        "body": "Non resti mai a lungo nello stesso genere, e ogni tappa la giudichi per conto tuo."
+      },
+      "maverick": {
+        "name": "Il Battitore Libero",
+        "body": "Nessun territorio, nessun consenso. Il tuo anno è impossibile da prevedere partendo dai voti degli altri."
+      },
+      "newcomer": {
+        "name": "L'Esordiente",
+        "body": "Quest'anno non ha ancora abbastanza film per fissare un profilo. Guarda di più, vota di più, poi torna."
+      }
+    },
+    "metrics": {
+      "oldAvg": "media sui film di 10+ anni",
+      "recentAvg": "media sui film sotto i 10 anni",
+      "ratingGap": "scarto, vecchi meno recenti",
+      "recentShare": "usciti negli ultimi 10 anni",
+      "oldShare": "di 10+ anni",
+      "medianAge": "età mediana alla visione (anni)",
+      "topGenresShare": "quota dei tuoi 3 generi di testa",
+      "repeatDirectorShare": "film di registi rivisti nell'anno",
+      "distinctGenres": "generi distinti",
+      "crowdCorrelation": "accordo con TMDB (da −1 a 1)",
+      "crowdDelta": "il tuo voto meno quello della massa",
+      "comparedCount": "film confrontati",
+      "topGenre": "primo genere",
+      "secondGenre": "secondo genere",
+      "topGenreCount": "film del primo genere",
+      "ratedShare": "film che hai votato",
+      "ratedCount": "voti dati",
+      "avgRating": "la tua media",
+      "viewings": "visioni",
+      "activeMonths": "mesi con almeno un film",
+      "peakMonthShare": "visioni nel mese di punta",
+      "rewatchShare": "visioni che erano rewatch",
+      "rewatchCount": "rewatch",
+      "mostRewatched": "il più rivisto"
+    },
+    "summary": {
+      "title": "il verdetto",
+      "tag": "09",
+      "movies": "film",
+      "viewings": "visioni",
+      "rated": "votati",
+      "avgRating": "la tua media",
+      "topGenre": "genere di testa",
+      "topDirector": "regista di testa",
+      "favourite": "film dell'anno",
+      "traitsTitle": "il tuo anno in otto parole",
+      "none": "—"
+    },
+    "credits": {
+      "incompleteBody": "{count} film non hanno ancora i dati TMDB: senza, tre schede restano bloccate.",
+      "enrichCta": "completa l'analisi",
+      "enriching": "analisi TMDB {done}/{total} film",
+      "cancel": "annulla",
+      "errorConfig": "TMDB_API_KEY non configurata sul server: aggiungila a .env.local e riavvia il server di sviluppo.",
+      "errorGeneric": "Analisi non riuscita. Controlla la connessione e riprova.",
+      "retry": "riprova",
+      "loading": "caricamento…"
+    },
+    "deck": {
+      "previous": "indietro",
+      "next": "avanti",
+      "restart": "ricomincia",
+      "hint": "trascina la scheda a destra o a sinistra — in entrambi i casi vai avanti",
+      "position": "scheda {index} di {total}"
+    }
   },
   "toast": {
     "regionLabel": "Notifiche",

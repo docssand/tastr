@@ -89,6 +89,18 @@ body {
   opacity: 0.5;
 }
 
+/* Mazzo Wrapped: la scheda in cima segue il dito, quelle dietro salgono di un posto alla volta.
+   La transizione sta qui e non inline perché prefers-reduced-motion possa spegnerla. */
+.wrapped-deck-card {
+  transition:
+    transform 220ms ease-out,
+    opacity 220ms ease-out;
+}
+
+.wrapped-deck-card[data-dragging="true"] {
+  transition: none;
+}
+
 /* Toast: entrata/uscita brevi e barra del countdown, in stile terminale */
 @keyframes toast-in {
   from {
@@ -148,5 +160,9 @@ body {
 
   .cursor-blink {
     animation: none;
+  }
+
+  .wrapped-deck-card {
+    transition: none;
   }
 }
