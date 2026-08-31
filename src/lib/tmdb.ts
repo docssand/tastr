@@ -79,6 +79,50 @@ export interface TmdbMovieDetailsResponse {
   credits?: TmdbCreditsResponse;
 }
 
+export interface TmdbTvResult {
+  id: number;
+  name: string;
+  first_air_date?: string;
+  poster_path?: string | null;
+  popularity?: number;
+}
+
+export interface TmdbTvSearchResponse {
+  results?: TmdbTvResult[];
+}
+
+/**
+ * Voce di `aggregate_credits`: in una serie una persona non ha un ruolo solo, e quello
+ * che conta non è dove sta in locandina ma in quanti episodi compare davvero.
+ */
+export interface TmdbAggregateCastMember {
+  id: number;
+  name: string;
+  order?: number;
+  total_episode_count?: number;
+  roles?: Array<{ episode_count?: number }>;
+}
+
+export interface TmdbAggregateCreditsResponse {
+  cast?: TmdbAggregateCastMember[];
+}
+
+export interface TmdbTvDetailsResponse {
+  id: number;
+  name?: string;
+  genres?: TmdbGenre[];
+  vote_average?: number;
+  first_air_date?: string;
+  number_of_episodes?: number;
+  number_of_seasons?: number;
+  /** TMDB la dà come lista (le serie antologiche hanno più formati) e spesso vuota. */
+  episode_run_time?: number[];
+  last_episode_to_air?: { runtime?: number | null } | null;
+  status?: string;
+  created_by?: Array<{ id: number; name: string }>;
+  aggregate_credits?: TmdbAggregateCreditsResponse;
+}
+
 /** Errore che espone lo status HTTP, così il chiamante distingue "chiave mancante" da "film non trovato". */
 export class TmdbError extends Error {
   constructor(
@@ -147,6 +191,20 @@ export function searchMovie(title: string, year?: number, signal?: AbortSignal) 
 /** `append_to_response=credits` evita una seconda chiamata per generi/voto e cast/regia. */
 export function getMovieDetails(tmdbId: number, signal?: AbortSignal) {
   return tmdbFetch<TmdbMovieDetailsResponse>(`movie/${tmdbId}`, { append_to_response: "credits" }, signal);
+}
+
+export function searchTv(title: string, year?: number, signal?: AbortSignal) {
+  const params: Record<string, string> = { query: title };
+  if (year) params.first_air_date_year = String(year);
+  return tmdbFetch<TmdbTvSearchResponse>("search/tv", params, signal);
+}
+
+/**
+ * Dettagli di una serie. `aggregate_credits` e non `credits`: quest'ultimo, su una serie,
+ * restituisce il cast del solo ultimo episodio andato in onda.
+ */
+export function getTvDetails(tmdbId: number, signal?: AbortSignal) {
+  return tmdbFetch<TmdbTvDetailsResponse>(`tv/${tmdbId}`, { append_to_response: "aggregate_credits" }, signal);
 }
 
 /** Film che TMDB considera vicini a questo: il seme delle raccomandazioni "simili a…". */
