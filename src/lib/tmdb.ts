@@ -34,6 +34,43 @@ export interface TmdbGenre {
   name: string;
 }
 
+export interface TmdbGenreListResponse {
+  genres: TmdbGenre[];
+}
+
+/** Forma con cui TMDB restituisce un film dentro una lista (discover, raccomandazioni, filmografie). */
+export interface TmdbMovieListItem {
+  id: number;
+  title: string;
+  release_date?: string;
+  poster_path?: string | null;
+  overview?: string;
+  genre_ids?: number[];
+  vote_average?: number;
+  vote_count?: number;
+  popularity?: number;
+}
+
+export interface TmdbMovieListResponse {
+  page?: number;
+  results?: TmdbMovieListItem[];
+  total_pages?: number;
+  total_results?: number;
+}
+
+/** Voce di `person/{id}/movie_credits`: un film della filmografia, con il ruolo svolto. */
+export interface TmdbPersonCreditItem extends TmdbMovieListItem {
+  job?: string;
+  department?: string;
+  order?: number;
+}
+
+export interface TmdbPersonCreditsResponse {
+  id: number;
+  cast?: TmdbPersonCreditItem[];
+  crew?: TmdbPersonCreditItem[];
+}
+
 export interface TmdbMovieDetailsResponse {
   id: number;
   genres?: TmdbGenre[];
@@ -110,4 +147,32 @@ export function searchMovie(title: string, year?: number, signal?: AbortSignal) 
 /** `append_to_response=credits` evita una seconda chiamata per generi/voto e cast/regia. */
 export function getMovieDetails(tmdbId: number, signal?: AbortSignal) {
   return tmdbFetch<TmdbMovieDetailsResponse>(`movie/${tmdbId}`, { append_to_response: "credits" }, signal);
+}
+
+/** Film che TMDB considera vicini a questo: il seme delle raccomandazioni "simili a…". */
+export function getMovieRecommendations(tmdbId: number, signal?: AbortSignal) {
+  return tmdbFetch<TmdbMovieListResponse>(`movie/${tmdbId}/recommendations`, {}, signal);
+}
+
+/** Filmografia completa di una persona, come interprete e come membro della troupe. */
+export function getPersonMovieCredits(personId: number, signal?: AbortSignal) {
+  return tmdbFetch<TmdbPersonCreditsResponse>(`person/${personId}/movie_credits`, {}, signal);
+}
+
+/**
+ * Ricerca per criteri (genere, intervallo di uscita, numero minimo di voti).
+ * È il modo per farsi dare da TMDB i titoli di riferimento di un genere o di un decennio
+ * che l'utente non ha mai esplorato: lì non c'è nessun film già visto da cui partire.
+ */
+export function discoverMovies(params: Record<string, string>, signal?: AbortSignal) {
+  return tmdbFetch<TmdbMovieListResponse>("discover/movie", { include_adult: "false", ...params }, signal);
+}
+
+/**
+ * Elenco dei generi con i rispettivi id, necessario perché discover filtra per id mentre
+ * il resto dell'app ragiona per nome. Le chiamate restano tutte in lingua predefinita
+ * (inglese): i nomi dei generi devono combaciare con quelli già salvati nella cache dei credits.
+ */
+export function getMovieGenres(signal?: AbortSignal) {
+  return tmdbFetch<TmdbGenreListResponse>("genre/movie/list", {}, signal);
 }

@@ -1,4 +1,5 @@
-import { CREDITS_STORE, LOOKUP_STORE, idbGetMany, idbPutMany, isIdbAvailable } from "@/lib/idb";
+import { CREDITS_STORE, LOOKUP_STORE, idbGetManySafe, idbPutManySafe } from "@/lib/idb";
+import { runPool } from "@/lib/enrich/pool";
 import { getMovieDetails, isFatalTmdbError, searchMovie } from "@/lib/tmdb";
 import { normalizeTitle, type WatchedMovie } from "@/lib/analysis/movies";
 import type { MovieCredits } from "@/lib/types";
@@ -35,25 +36,6 @@ function lookupKey(movie: WatchedMovie) {
   return `${normalizeTitle(movie.title)}|${movie.year ?? ""}`;
 }
 
-async function safeGetMany<T>(store: string, keys: IDBValidKey[]): Promise<Map<IDBValidKey, T>> {
-  if (!isIdbAvailable()) return new Map();
-  try {
-    return await idbGetMany<T>(store, keys);
-  } catch {
-    // Modalità privata, quota piena, storage bloccato: si degrada a "nessuna cache".
-    return new Map();
-  }
-}
-
-async function safePutMany(store: string, entries: [IDBValidKey, unknown][]) {
-  if (!isIdbAvailable() || entries.length === 0) return;
-  try {
-    await idbPutMany(store, entries);
-  } catch {
-    // Ignorato di proposito: la cache è un'ottimizzazione, non un requisito.
-  }
-}
-
 /** Legge solo ciò che è già in cache locale, senza nessuna chiamata di rete. */
 export async function readCachedCredits(movies: WatchedMovie[]): Promise<CreditsSnapshot> {
   const snapshot = emptySnapshot();
@@ -62,7 +44,7 @@ export async function readCachedCredits(movies: WatchedMovie[]): Promise<Credits
   const unresolved = movies.filter((m) => !m.tmdbId);
   if (unresolved.length > 0) {
     const keys = Array.from(new Set(unresolved.map(lookupKey)));
-    const cachedLookups = await safeGetMany<number | null>(LOOKUP_STORE, keys);
+    const cachedLookups = await idbGetManySafe<number | null>(LOOKUP_STORE, keys);
     for (const movie of unresolved) {
       const cached = cachedLookups.get(lookupKey(movie));
       if (typeof cached === "number") snapshot.resolved.set(movie.key, cached);
@@ -77,7 +59,7 @@ export async function readCachedCredits(movies: WatchedMovie[]): Promise<Credits
     if (id) ids.add(id);
   }
 
-  const cachedCredits = await safeGetMany<MovieCredits>(CREDITS_STORE, Array.from(ids));
+  const cachedCredits = await idbGetManySafe<MovieCredits>(CREDITS_STORE, Array.from(ids));
   cachedCredits.forEach((value, key) => {
     // Le cache scritte prima dell'introduzione di generi/voto/anno TMDB non hanno questi campi
     // (l'anno può legittimamente mancare anche dopo un fetch riuscito, quindi si controlla la
@@ -96,27 +78,6 @@ export function pendingMovies(movies: WatchedMovie[], snapshot: CreditsSnapshot)
     const id = movie.tmdbId ?? snapshot.resolved.get(movie.key);
     return !id || !snapshot.credits.has(id);
   });
-}
-
-/**
- * Esegue `worker` su tutti gli item con al massimo `limit` chiamate in volo.
- * Se un worker solleva un errore, gli altri si fermano al giro successivo:
- * senza questo, una chiave TMDB mancante farebbe partire migliaia di richieste inutili.
- */
-async function runPool<T>(items: T[], limit: number, worker: (item: T) => Promise<void>) {
-  let cursor = 0;
-  let stopped = false;
-  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
-    while (cursor < items.length && !stopped) {
-      try {
-        await worker(items[cursor++]);
-      } catch (err) {
-        stopped = true;
-        throw err;
-      }
-    }
-  });
-  await Promise.all(runners);
 }
 
 async function resolveTmdbId(movie: WatchedMovie, signal?: AbortSignal): Promise<number | null> {
@@ -183,7 +144,7 @@ export async function enrichMovies(movies: WatchedMovie[], options: EnrichOption
   const flush = async () => {
     const credits = creditsBuffer.splice(0, creditsBuffer.length);
     const lookups = lookupBuffer.splice(0, lookupBuffer.length);
-    await Promise.all([safePutMany(CREDITS_STORE, credits), safePutMany(LOOKUP_STORE, lookups)]);
+    await Promise.all([idbPutManySafe(CREDITS_STORE, credits), idbPutManySafe(LOOKUP_STORE, lookups)]);
   };
 
   await runPool(pending, CONCURRENCY, async (movie) => {

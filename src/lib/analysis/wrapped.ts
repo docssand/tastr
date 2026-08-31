@@ -1,5 +1,6 @@
 import { collectMovies, type WatchedMovie } from "@/lib/analysis/movies";
 import { releaseYearOf } from "@/lib/analysis/charts";
+import { mean, pearson, rescale } from "@/lib/analysis/stats";
 import type { MovieCredits, NormalizedEntry } from "@/lib/types";
 
 /**
@@ -252,58 +253,11 @@ function textMetric(key: MetricKey, text: string): WrappedMetric {
   return { key, value: 0, format: "text", text };
 }
 
-function mean(values: number[]): number | null {
-  if (values.length === 0) return null;
-  return values.reduce((sum, v) => sum + v, 0) / values.length;
-}
-
 function median(values: number[]): number | null {
   if (values.length === 0) return null;
   const sorted = [...values].sort((a, b) => a - b);
   const mid = sorted.length >> 1;
   return sorted.length % 2 === 1 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-}
-
-function clamp01(value: number) {
-  return Math.min(1, Math.max(0, value));
-}
-
-/** Riscala `value` a 0-1 fra due estremi. Serve a mettere metriche diverse sulla stessa scala. */
-function rescale(value: number, low: number, high: number) {
-  return clamp01((value - low) / (high - low));
-}
-
-/**
- * Correlazione di Pearson. Misura se sei d'accordo con la massa su *quali* film sono belli,
- * indipendentemente dal fatto che tu voti più alto o più basso di lei: quello è lo scarto medio,
- * riportato a parte. `null` quando una delle due serie è piatta e la correlazione non è definita.
- */
-function pearson(pairs: Array<[number, number]>): number | null {
-  const n = pairs.length;
-  if (n < 2) return null;
-
-  let sumX = 0;
-  let sumY = 0;
-  for (const [x, y] of pairs) {
-    sumX += x;
-    sumY += y;
-  }
-  const meanX = sumX / n;
-  const meanY = sumY / n;
-
-  let covariance = 0;
-  let varianceX = 0;
-  let varianceY = 0;
-  for (const [x, y] of pairs) {
-    const dx = x - meanX;
-    const dy = y - meanY;
-    covariance += dx * dy;
-    varianceX += dx * dx;
-    varianceY += dy * dy;
-  }
-
-  const denominator = Math.sqrt(varianceX * varianceY);
-  return denominator === 0 ? null : covariance / denominator;
 }
 
 function creditsOf(movie: WatchedMovie, credits: Map<number, MovieCredits>) {
