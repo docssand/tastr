@@ -2,8 +2,10 @@
 
 import { Panel } from "@/components/ui/Panel";
 import type { WrappedCard, WrappedReport } from "@/lib/analysis/wrapped";
+import { traitNames } from "@/lib/wrappedPresentation";
 import type { Dictionary } from "@/i18n/types";
 import type { WrappedFormatters } from "@/components/wrapped/WrappedCardPanel";
+import { ShareWrappedButton } from "@/components/wrapped/ShareWrappedButton";
 
 type WrappedDict = Dictionary["wrapped"];
 
@@ -20,15 +22,7 @@ function Figure({ label, value }: { label: string; value: string }) {
 
 /** Gli aggettivi delle otto schede, nell'ordine in cui li hai letti scorrendo la pagina. */
 function TraitList({ cards, dict }: { cards: WrappedCard[]; dict: WrappedDict }) {
-  const names = cards
-    .map((card) =>
-      card.verdict === null
-        ? null
-        : card.verdict.kind === "animal"
-          ? dict.animals[card.verdict.key].name
-          : dict.verdicts[card.verdict.key].name,
-    )
-    .filter((name): name is string => name !== null);
+  const names = traitNames(cards, dict);
 
   if (names.length === 0) return null;
 
@@ -53,11 +47,13 @@ export function WrappedSummaryPanel({
   report,
   dict,
   format,
+  lang,
   className,
 }: {
   report: WrappedReport;
   dict: WrappedDict;
   format: WrappedFormatters;
+  lang: string;
   className?: string;
 }) {
   const { summary } = report;
@@ -84,6 +80,10 @@ export function WrappedSummaryPanel({
       </div>
 
       <TraitList cards={report.cards} dict={dict} />
+
+      <div className="mt-8 border-t border-border pt-6">
+        <ShareWrappedButton report={report} dict={dict} format={format} lang={lang} />
+      </div>
     </Panel>
   );
 }
