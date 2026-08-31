@@ -12,6 +12,7 @@ import { isFatalTmdbError } from "@/lib/tmdb";
 import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { Mascot } from "@/components/ui/Mascot";
 import { formatMessage } from "@/lib/i18n";
 import type { Dictionary } from "@/i18n/types";
 import { useToast } from "@/components/ui/toast/ToastProvider";
@@ -205,6 +206,7 @@ export function UploadFlow({ lang, dict, warningMessages }: UploadFlowProps) {
         }`}
       >
         <input ref={inputRef} type="file" accept=".zip" className="hidden" onChange={onFileSelected} />
+        <Mascot size={48} className="mx-auto mb-4" />
         <p className="text-sm uppercase tracking-widest text-foreground">{dict.dropzone}</p>
         <p className="mt-2 text-xs uppercase tracking-widest text-muted">{dict.dropzoneAlt}</p>
       </div>

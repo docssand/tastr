@@ -1,0 +1,94 @@
+interface MascotProps {
+  size?: number;
+  className?: string;
+}
+
+/** La ranocchietta pixel-art disegnata a mano, riusata come icona del sito. */
+export function Mascot({ size = 32, className }: MascotProps) {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      width={size}
+      height={size}
+      shapeRendering="crispEdges"
+      aria-hidden="true"
+      className={className}
+    >
+      <rect x="19" y="7" width="4" height="1" fill="rgb(205,220,57)"/>
+      <rect x="10" y="8" width="9" height="1" fill="rgb(205,220,57)"/>
+      <rect x="19" y="8" width="2" height="1" fill="rgb(255,235,238)"/>
+      <rect x="21" y="8" width="3" height="1" fill="rgb(205,220,57)"/>
+      <rect x="9" y="9" width="4" height="1" fill="rgb(205,220,57)"/>
+      <rect x="13" y="9" width="2" height="1" fill="rgb(255,235,238)"/>
+      <rect x="15" y="9" width="4" height="1" fill="rgb(205,220,57)"/>
+      <rect x="19" y="9" width="1" height="1" fill="rgb(255,235,238)"/>
+      <rect x="20" y="9" width="1" height="1" fill="rgb(0,0,0)"/>
+      <rect x="21" y="9" width="1" height="1" fill="rgb(255,235,238)"/>
+      <rect x="22" y="9" width="2" height="1" fill="rgb(205,220,57)"/>
+      <rect x="9" y="10" width="4" height="1" fill="rgb(205,220,57)"/>
+      <rect x="13" y="10" width="1" height="1" fill="rgb(255,235,238)"/>
+      <rect x="14" y="10" width="1" height="1" fill="rgb(0,0,0)"/>
+      <rect x="15" y="10" width="1" height="1" fill="rgb(255,235,238)"/>
+      <rect x="16" y="10" width="3" height="1" fill="rgb(205,220,57)"/>
+      <rect x="19" y="10" width="1" height="1" fill="rgb(255,235,238)"/>
+      <rect x="20" y="10" width="1" height="1" fill="rgb(0,0,0)"/>
+      <rect x="21" y="10" width="1" height="1" fill="rgb(255,235,238)"/>
+      <rect x="22" y="10" width="2" height="1" fill="rgb(205,220,57)"/>
+      <rect x="9" y="11" width="4" height="1" fill="rgb(205,220,57)"/>
+      <rect x="13" y="11" width="3" height="1" fill="rgb(255,235,238)"/>
+      <rect x="16" y="11" width="3" height="1" fill="rgb(205,220,57)"/>
+      <rect x="19" y="11" width="2" height="1" fill="rgb(255,235,238)"/>
+      <rect x="21" y="11" width="3" height="1" fill="rgb(205,220,57)"/>
+      <rect x="9" y="12" width="15" height="1" fill="rgb(205,220,57)"/>
+      <rect x="9" y="13" width="4" height="1" fill="rgb(205,220,57)"/>
+      <rect x="13" y="13" width="1" height="1" fill="rgb(76,175,80)"/>
+      <rect x="14" y="13" width="8" height="1" fill="rgb(205,220,57)"/>
+      <rect x="22" y="13" width="1" height="1" fill="rgb(76,175,80)"/>
+      <rect x="23" y="13" width="1" height="1" fill="rgb(205,220,57)"/>
+      <rect x="9" y="14" width="4" height="1" fill="rgb(205,220,57)"/>
+      <rect x="13" y="14" width="2" height="1" fill="rgb(76,175,80)"/>
+      <rect x="15" y="14" width="3" height="1" fill="rgb(229,115,115)"/>
+      <rect x="18" y="14" width="1" height="1" fill="rgb(239,83,80)"/>
+      <rect x="19" y="14" width="2" height="1" fill="rgb(229,115,115)"/>
+      <rect x="21" y="14" width="2" height="1" fill="rgb(76,175,80)"/>
+      <rect x="23" y="14" width="1" height="1" fill="rgb(205,220,57)"/>
+      <rect x="9" y="15" width="5" height="1" fill="rgb(205,220,57)"/>
+      <rect x="14" y="15" width="1" height="1" fill="rgb(76,175,80)"/>
+      <rect x="15" y="15" width="4" height="1" fill="rgb(229,115,115)"/>
+      <rect x="19" y="15" width="1" height="1" fill="rgb(239,83,80)"/>
+      <rect x="20" y="15" width="2" height="1" fill="rgb(229,115,115)"/>
+      <rect x="22" y="15" width="2" height="1" fill="rgb(205,220,57)"/>
+      <rect x="9" y="16" width="7" height="1" fill="rgb(205,220,57)"/>
+      <rect x="16" y="16" width="4" height="1" fill="rgb(229,115,115)"/>
+      <rect x="20" y="16" width="1" height="1" fill="rgb(239,83,80)"/>
+      <rect x="21" y="16" width="2" height="1" fill="rgb(229,115,115)"/>
+      <rect x="9" y="17" width="7" height="1" fill="rgb(205,220,57)"/>
+      <rect x="16" y="17" width="4" height="1" fill="rgb(229,115,115)"/>
+      <rect x="20" y="17" width="1" height="1" fill="rgb(239,83,80)"/>
+      <rect x="21" y="17" width="2" height="1" fill="rgb(229,115,115)"/>
+      <rect x="10" y="18" width="6" height="1" fill="rgb(205,220,57)"/>
+      <rect x="16" y="18" width="4" height="1" fill="rgb(229,115,115)"/>
+      <rect x="20" y="18" width="1" height="1" fill="rgb(239,83,80)"/>
+      <rect x="21" y="18" width="2" height="1" fill="rgb(229,115,115)"/>
+      <rect x="11" y="19" width="4" height="1" fill="rgb(205,220,57)"/>
+      <rect x="17" y="19" width="6" height="1" fill="rgb(229,115,115)"/>
+      <rect x="11" y="20" width="4" height="1" fill="rgb(205,220,57)"/>
+      <rect x="17" y="20" width="6" height="1" fill="rgb(229,115,115)"/>
+      <rect x="12" y="21" width="3" height="1" fill="rgb(205,220,57)"/>
+      <rect x="18" y="21" width="4" height="1" fill="rgb(229,115,115)"/>
+      <rect x="22" y="21" width="1" height="1" fill="rgb(205,220,57)"/>
+      <rect x="12" y="22" width="3" height="1" fill="rgb(205,220,57)"/>
+      <rect x="20" y="22" width="3" height="1" fill="rgb(205,220,57)"/>
+      <rect x="12" y="23" width="3" height="1" fill="rgb(205,220,57)"/>
+      <rect x="20" y="23" width="3" height="1" fill="rgb(205,220,57)"/>
+      <rect x="12" y="24" width="3" height="1" fill="rgb(205,220,57)"/>
+      <rect x="20" y="24" width="3" height="1" fill="rgb(205,220,57)"/>
+      <rect x="12" y="25" width="5" height="1" fill="rgb(205,220,57)"/>
+      <rect x="20" y="25" width="5" height="1" fill="rgb(205,220,57)"/>
+      <rect x="12" y="26" width="5" height="1" fill="rgb(205,220,57)"/>
+      <rect x="20" y="26" width="5" height="1" fill="rgb(205,220,57)"/>
+      <rect x="13" y="27" width="4" height="1" fill="rgb(205,220,57)"/>
+      <rect x="21" y="27" width="4" height="1" fill="rgb(205,220,57)"/>
+    </svg>
+  );
+}

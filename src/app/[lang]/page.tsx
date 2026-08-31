@@ -1,6 +1,7 @@
 import { LinkButton } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { Badge } from "@/components/ui/Badge";
+import { Mascot } from "@/components/ui/Mascot";
 import { getDictionary } from "@/i18n/dictionaries";
 
 export default async function Home({ params }: PageProps<"/[lang]">) {
@@ -11,7 +12,10 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
   return (
     <div className="mx-auto max-w-5xl px-6 py-20">
       <section className="max-w-2xl">
-        <div className="text-xs uppercase tracking-widest text-accent">{home.eyebrow}</div>
+        <div className="flex items-center gap-3">
+          <Mascot size={36} />
+          <div className="text-xs uppercase tracking-widest text-accent">{home.eyebrow}</div>
+        </div>
         <h1 className="mt-4 text-4xl leading-tight text-foreground sm:text-5xl">
           {home.title[0]}
           <br />

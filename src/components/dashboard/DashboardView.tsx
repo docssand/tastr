@@ -12,6 +12,7 @@ import { Panel } from "@/components/ui/Panel";
 import { StatCard } from "@/components/ui/StatCard";
 import { Badge } from "@/components/ui/Badge";
 import { Button, LinkButton } from "@/components/ui/Button";
+import { Mascot } from "@/components/ui/Mascot";
 import { TopPeoplePanel } from "@/components/dashboard/TopPeoplePanel";
 import { ChartsPanel } from "@/components/dashboard/ChartsPanel";
 import type { Dictionary } from "@/i18n/types";
@@ -39,11 +40,16 @@ export function DashboardView({ lang, dict }: DashboardViewProps) {
   if (result === null) {
     return (
       <Panel title={dict.emptyTitle}>
-        <p className="text-sm leading-relaxed text-muted">{dict.emptyBody}</p>
-        <div className="mt-6">
-          <LinkButton href={`/${lang}/upload`} variant="primary">
-            {dict.emptyCta}
-          </LinkButton>
+        <div className="flex flex-col items-center gap-4 py-6 text-center sm:flex-row sm:text-left">
+          <Mascot size={72} />
+          <div>
+            <p className="text-sm leading-relaxed text-muted">{dict.emptyBody}</p>
+            <div className="mt-6">
+              <LinkButton href={`/${lang}/upload`} variant="primary">
+                {dict.emptyCta}
+              </LinkButton>
+            </div>
+          </div>
         </div>
       </Panel>
     );
