@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/toast/ToastProvider";
 import { renderWrappedShareImage } from "@/lib/wrappedShareImage";
@@ -95,39 +96,44 @@ export function ShareWrappedButton({ report, dict, format, lang }: ShareWrappedB
         {generating ? copy.generating : copy.cta}
       </Button>
 
-      {preview && (
-        <div
-          ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label={copy.previewTitle}
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-background/90 p-6"
-          onClick={(e) => {
-            if (e.target === dialogRef.current) closePreview();
-          }}
-        >
-          <div className="flex max-h-full w-full max-w-sm flex-col items-center gap-5">
-            <p className="text-xs uppercase tracking-widest text-muted">{copy.previewTitle}</p>
-            {/* eslint-disable-next-line @next/next/no-img-element -- immagine generata client-side da un blob: */}
-            <img
-              src={preview.url}
-              alt=""
-              className="max-h-[70vh] w-auto rounded-sm border border-border-strong object-contain"
-            />
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Button variant="primary" onClick={share}>
-                {copy.shareAction}
-              </Button>
-              <Button variant="ghost" onClick={download}>
-                {copy.download}
-              </Button>
-              <Button variant="ghost" onClick={closePreview}>
-                {copy.close}
-              </Button>
+      {preview &&
+        createPortal(
+          // Il mazzo Wrapped anima le sue schede con `transform`, che crea un containing block
+          // per `position: fixed`: renderizzare qui dentro ancorerebbe il modale alla scheda
+          // invece che al viewport. Il portal lo sgancia direttamente su <body>.
+          <div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={copy.previewTitle}
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-background/90 p-6"
+            onClick={(e) => {
+              if (e.target === dialogRef.current) closePreview();
+            }}
+          >
+            <div className="flex max-h-full w-full max-w-sm flex-col items-center gap-5">
+              <p className="text-xs uppercase tracking-widest text-muted">{copy.previewTitle}</p>
+              {/* eslint-disable-next-line @next/next/no-img-element -- immagine generata client-side da un blob: */}
+              <img
+                src={preview.url}
+                alt=""
+                className="max-h-[70vh] w-auto rounded-sm border border-border-strong object-contain"
+              />
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Button variant="primary" onClick={share}>
+                  {copy.shareAction}
+                </Button>
+                <Button variant="ghost" onClick={download}>
+                  {copy.download}
+                </Button>
+                <Button variant="ghost" onClick={closePreview}>
+                  {copy.close}
+                </Button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </>
   );
 }
