@@ -18,6 +18,7 @@ export function NavBar({ lang, dict }: { lang: string; dict: Dictionary["nav"] }
     { href: `/${lang}`, label: dict.home },
     { href: `/${lang}/upload`, label: dict.upload },
     { href: `/${lang}/dashboard`, label: dict.dashboard },
+    { href: `/${lang}/suggestions`, label: dict.suggestions },
     { href: `/${lang}/wrapped`, label: dict.wrapped },
   ];
 

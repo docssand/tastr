@@ -4,10 +4,12 @@
  */
 
 const DB_NAME = "tastr";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 export const CREDITS_STORE = "credits";
 export const LOOKUP_STORE = "lookups";
+/** Risposte TMDB da cui nascono i suggerimenti: liste di candidati, non film già visti. */
+export const HARVEST_STORE = "harvest";
 
 let dbPromise: Promise<IDBDatabase> | null = null;
 
@@ -27,6 +29,7 @@ function openDb(): Promise<IDBDatabase> {
       const db = request.result;
       if (!db.objectStoreNames.contains(CREDITS_STORE)) db.createObjectStore(CREDITS_STORE);
       if (!db.objectStoreNames.contains(LOOKUP_STORE)) db.createObjectStore(LOOKUP_STORE);
+      if (!db.objectStoreNames.contains(HARVEST_STORE)) db.createObjectStore(HARVEST_STORE);
     };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error ?? new Error("Apertura IndexedDB fallita."));
@@ -78,11 +81,35 @@ export async function idbPutMany(storeName: string, entries: [IDBValidKey, unkno
 
 export async function idbClearAll(): Promise<void> {
   const db = await openDb();
-  const tx = db.transaction([CREDITS_STORE, LOOKUP_STORE], "readwrite");
+  const tx = db.transaction([CREDITS_STORE, LOOKUP_STORE, HARVEST_STORE], "readwrite");
   tx.objectStore(CREDITS_STORE).clear();
   tx.objectStore(LOOKUP_STORE).clear();
+  tx.objectStore(HARVEST_STORE).clear();
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error ?? new Error("Pulizia IndexedDB fallita."));
   });
+}
+
+/**
+ * Varianti tolleranti di lettura e scrittura: la cache è un'ottimizzazione, non un requisito.
+ * Modalità privata, quota piena, storage bloccato dal browser si traducono in "nessuna cache"
+ * invece che in un errore che ferma l'analisi.
+ */
+export async function idbGetManySafe<T>(storeName: string, keys: IDBValidKey[]): Promise<Map<IDBValidKey, T>> {
+  if (!isIdbAvailable()) return new Map();
+  try {
+    return await idbGetMany<T>(storeName, keys);
+  } catch {
+    return new Map();
+  }
+}
+
+export async function idbPutManySafe(storeName: string, entries: [IDBValidKey, unknown][]): Promise<void> {
+  if (!isIdbAvailable() || entries.length === 0) return;
+  try {
+    await idbPutMany(storeName, entries);
+  } catch {
+    // Ignorato di proposito: vedi sopra.
+  }
 }
