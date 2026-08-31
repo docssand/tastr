@@ -213,7 +213,7 @@ function drawArchetype(ctx: CanvasRenderingContext2D, fontFamily: string, y: num
   ctx.fillText(label.toUpperCase(), MARGIN, y);
   resetLetterSpacing(ctx);
 
-  const headlineY = y + 92;
+  const headlineY = y + 130;
   const upper = name.toUpperCase();
   const bracketed = `[ ${upper} ]`;
   const size = fitFontSize(ctx, bracketed, fontFamily, 700, 96, 48, CONTENT_WIDTH);
@@ -239,7 +239,7 @@ function drawArchetype(ctx: CanvasRenderingContext2D, fontFamily: string, y: num
   ctx.fillStyle = withAlpha(COLOR.muted, 0.5);
   ctx.fillText(" ]", x, headlineY);
 
-  return headlineY + 40;
+  return headlineY + 70;
 }
 
 function drawParagraph(ctx: CanvasRenderingContext2D, fontFamily: string, y: number, text: string) {
