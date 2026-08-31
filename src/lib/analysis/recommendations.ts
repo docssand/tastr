@@ -442,8 +442,25 @@ export function rankForYou(candidates: CandidateMovie[], profile: TasteProfile, 
   return capBy(scored, limit, (r) => sourceQuota(r.candidate), RECO_TUNING.maxPerSource);
 }
 
+/**
+ * Un genere o un decennio riempiono una lacuna solo se il film è arrivato dalla ricerca
+ * fatta apposta per quella lacuna, non semplicemente perché porta quel tag fra i suoi generi.
+ * Un classico universale ha spesso quattro o cinque generi e centomila voti: senza questo
+ * vincolo finirebbe in cima a *ogni* ricerca per genere, e le due liste mostrerebbero
+ * quasi gli stessi titoli. Sui registi il vincolo non serve: la filmografia arriva da
+ * un'unica richiesta, quella è già la ricerca mirata.
+ */
 function gapsMatching(candidate: CandidateMovie, gaps: Gap[]): Gap[] {
-  const decade = candidate.year === undefined ? null : decadeOf(candidate.year);
+  const gapGenres = new Set(
+    candidate.sources
+      .filter((s): s is Extract<CandidateSource, { kind: "gapGenre" }> => s.kind === "gapGenre")
+      .map((s) => s.genre),
+  );
+  const gapEras = new Set(
+    candidate.sources
+      .filter((s): s is Extract<CandidateSource, { kind: "gapEra" }> => s.kind === "gapEra")
+      .map((s) => s.decade),
+  );
   const directorIds = new Set(
     candidate.sources
       .filter((s): s is Extract<CandidateSource, { kind: "gapDirector" | "director" }> => s.kind === "gapDirector" || s.kind === "director")
@@ -451,8 +468,8 @@ function gapsMatching(candidate: CandidateMovie, gaps: Gap[]): Gap[] {
   );
 
   return gaps.filter((gap) => {
-    if (gap.kind === "genre") return candidate.genres.includes(gap.genre);
-    if (gap.kind === "era") return decade === gap.decade;
+    if (gap.kind === "genre") return gapGenres.has(gap.genre);
+    if (gap.kind === "era") return gapEras.has(gap.decade);
     return directorIds.has(gap.personId);
   });
 }
