@@ -2,21 +2,27 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { collectMovies, type WatchedMovie } from "@/lib/analysis/movies";
-import { buildSeenIndex, buildTasteProfile, type TasteProfile, type TasteScope } from "@/lib/analysis/taste";
+import {
+  buildSeenIndex,
+  buildTasteProfile,
+  isRecentWatch,
+  recentCutoff,
+  type TasteProfile,
+  type TasteScope,
+} from "@/lib/analysis/taste";
 import { rankBlindSpots, rankForYou, type Gap, type Recommendation } from "@/lib/analysis/recommendations";
 import { harvestCandidates, type HarvestProgress, type HarvestResult } from "@/lib/enrich/candidates";
-import { watchYearOf } from "@/lib/analysis/wrapped";
 import { isFatalTmdbError } from "@/lib/tmdb";
 import type { MovieCredits, NormalizedEntry } from "@/lib/types";
 
-/** Quanti titoli calcolare per lista. La vista ne mostra meno e lascia espandere. */
-const LIST_LIMIT = 24;
+/** Lunghezza di ciascuna lista: dieci titoli, senza coda da scorrere. */
+const LIST_LIMIT = 10;
 
 export type SuggestionsStatus = "loading" | "insufficient" | "harvesting" | "ready" | "error";
 export type SuggestionsErrorCode = "config" | "generic";
 
 export function scopeKey(scope: TasteScope) {
-  return scope.kind === "all" ? "all" : `year:${scope.year}`;
+  return scope.kind;
 }
 
 interface HarvestState {
@@ -74,8 +80,9 @@ export function useSuggestions({
 
   const scoped = useMemo(() => {
     if (scope.kind === "all") return movies;
-    return collectMovies(entries.filter((entry) => watchYearOf(entry.watchedAt) === scope.year));
-  }, [entries, movies, scope]);
+    const cutoff = recentCutoff(now);
+    return collectMovies(entries.filter((entry) => isRecentWatch(entry.watchedAt, cutoff)));
+  }, [entries, movies, scope, now]);
 
   const profile = useMemo(() => buildTasteProfile(scoped, credits, { scope, now }), [scoped, credits, scope, now]);
   // L'esclusione dei già visti guarda sempre tutta la libreria, anche quando il profilo è annuale.

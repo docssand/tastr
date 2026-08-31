@@ -34,6 +34,8 @@ export const TASTE_TUNING = {
   affinityScale: 1.2,
   /** Sotto questo numero di film con credits il profilo non è affidabile. */
   minMoviesForProfile: 12,
+  /** Ampiezza in anni della finestra "gusti recenti". */
+  recentWindowYears: 3,
   /** Quanti film usare come seme delle raccomandazioni "simili a…". */
   seedCount: 6,
   /** Registi e attori di testa da cui pescare filmografie. */
@@ -91,7 +93,11 @@ export interface SeenIndex {
   titles: Set<string>;
 }
 
-export type TasteScope = { kind: "all" } | { kind: "year"; year: number };
+/**
+ * Su quale parte dello storico costruire il profilo: tutta la libreria (con le visioni
+ * recenti che pesano di più) oppure solo la finestra degli ultimi anni.
+ */
+export type TasteScope = { kind: "all" } | { kind: "recent" };
 
 export interface TasteProfile {
   scope: TasteScope;
@@ -135,6 +141,22 @@ export function recencyWeight(lastWatchedAt: string | undefined, now: Date): num
   const ageYears = Math.max(0, (now.getTime() - watched) / MS_PER_YEAR);
   const decay = 0.5 ** (ageYears / TASTE_TUNING.recencyHalfLife);
   return TASTE_TUNING.recencyFloor + (1 - TASTE_TUNING.recencyFloor) * decay;
+}
+
+/**
+ * Data (YYYY-MM-DD) da cui inizia lo storico recente. Il confronto avviene fra date in
+ * forma testuale perché le sorgenti di import scrivono sia "2024-03-12" sia una data ISO
+ * completa: tagliare ai primi dieci caratteri le rende confrontabili senza parsing.
+ */
+export function recentCutoff(now: Date): string {
+  const cutoff = new Date(now);
+  cutoff.setFullYear(cutoff.getFullYear() - TASTE_TUNING.recentWindowYears);
+  return cutoff.toISOString().slice(0, 10);
+}
+
+/** Vero se la visione cade nella finestra recente. Senza data non si può dire: resta fuori. */
+export function isRecentWatch(watchedAt: string | undefined, cutoff: string): boolean {
+  return watchedAt !== undefined && watchedAt.slice(0, 10) >= cutoff;
 }
 
 function seenTitleKey(title: string, year: number | undefined) {

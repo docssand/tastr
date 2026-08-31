@@ -12,7 +12,6 @@ import { Mascot } from "@/components/ui/Mascot";
 import { useMovieCredits } from "@/components/dashboard/useMovieCredits";
 import { SuggestionCard, suggestionFormatters } from "@/components/suggestions/SuggestionCard";
 import { useSuggestions } from "@/components/suggestions/useSuggestions";
-import { watchYears } from "@/lib/analysis/wrapped";
 import { TASTE_TUNING, type TasteScope } from "@/lib/analysis/taste";
 import type { Gap, Recommendation } from "@/lib/analysis/recommendations";
 import { formatMessage } from "@/lib/i18n";
@@ -21,9 +20,6 @@ import type { NormalizedEntry } from "@/lib/types";
 
 type SuggestionsDict = Dictionary["suggestions"];
 type Tab = "forYou" | "gaps";
-
-/** Quante schede mostrare prima di "mostra altri". */
-const PAGE_SIZE = 8;
 
 interface SuggestionsViewProps {
   lang: string;
@@ -93,35 +89,32 @@ function CreditsBanner({
 }
 
 function ScopePicker({
-  years,
   scope,
   dict,
   onSelect,
 }: {
-  years: number[];
   scope: TasteScope;
   dict: SuggestionsDict;
   onSelect: (scope: TasteScope) => void;
 }) {
-  const options: Array<{ key: string; label: string; value: TasteScope }> = [
-    { key: "all", label: dict.scopeAll, value: { kind: "all" } },
-    ...years.map((year) => ({ key: String(year), label: String(year), value: { kind: "year", year } as TasteScope })),
+  const options: Array<{ label: string; value: TasteScope }> = [
+    { label: dict.scopeAll, value: { kind: "all" } },
+    { label: dict.scopeRecent, value: { kind: "recent" } },
   ];
-  const activeKey = scope.kind === "all" ? "all" : String(scope.year);
 
   return (
-    <div className="flex flex-wrap gap-2">
-      {options.map((option) => (
+    <div className="flex">
+      {options.map((option, i) => (
         <button
-          key={option.key}
+          key={option.value.kind}
           type="button"
           onClick={() => onSelect(option.value)}
-          aria-pressed={option.key === activeKey}
+          aria-pressed={option.value.kind === scope.kind}
           className={`border px-4 py-1.5 text-xs uppercase tracking-widest transition-colors ${
-            option.key === activeKey
+            option.value.kind === scope.kind
               ? "border-accent text-accent"
               : "border-border-strong text-muted hover:text-foreground"
-          }`}
+          } ${i > 0 ? "-ml-px" : ""}`}
         >
           {option.label}
         </button>
@@ -201,38 +194,25 @@ function SuggestionList({
   format: ReturnType<typeof suggestionFormatters>;
   showMatch: boolean;
 }) {
-  const [expanded, setExpanded] = useState(false);
-  const visible = expanded ? items : items.slice(0, PAGE_SIZE);
-
   if (items.length === 0) return <p className="text-sm leading-relaxed text-muted">{dict.empty}</p>;
 
   return (
-    <div>
-      <ul className="grid gap-4 md:grid-cols-2">
-        {visible.map((item) => (
-          <SuggestionCard
-            key={item.candidate.tmdbId}
-            recommendation={item}
-            dict={dict}
-            format={format}
-            showMatch={showMatch}
-          />
-        ))}
-      </ul>
-      {items.length > PAGE_SIZE && (
-        <div className="mt-5 flex justify-center">
-          <Button variant="ghost" onClick={() => setExpanded((v) => !v)} className="px-4 py-1.5 text-[11px]">
-            {expanded ? dict.showLess : dict.showMore}
-          </Button>
-        </div>
-      )}
-    </div>
+    <ul className="grid gap-4 md:grid-cols-2">
+      {items.map((item) => (
+        <SuggestionCard
+          key={item.candidate.tmdbId}
+          recommendation={item}
+          dict={dict}
+          format={format}
+          showMatch={showMatch}
+        />
+      ))}
+    </ul>
   );
 }
 
 function SuggestionsContent({ entries, dict, lang }: { entries: NormalizedEntry[]; dict: SuggestionsDict; lang: string }) {
   const credits = useMovieCredits(entries);
-  const years = useMemo(() => watchYears(entries), [entries]);
   const format = useMemo(() => suggestionFormatters(lang), [lang]);
 
   const [scope, setScope] = useState<TasteScope>({ kind: "all" });
@@ -263,7 +243,7 @@ function SuggestionsContent({ entries, dict, lang }: { entries: NormalizedEntry[
   return (
     <div className="flex flex-col gap-10">
       <Panel title={dict.scopeLabel}>
-        <ScopePicker years={years} scope={scope} dict={dict} onSelect={setScope} />
+        <ScopePicker scope={scope} dict={dict} onSelect={setScope} />
         <p className="mt-5 text-xs leading-relaxed text-muted">{dict.scopeHint}</p>
         <p className="mt-3 text-xs tabular-nums text-muted">
           {formatMessage(dict.profileSummary, {
@@ -367,7 +347,6 @@ function SuggestionsContent({ entries, dict, lang }: { entries: NormalizedEntry[
               <div className="flex flex-col gap-6">
                 <GapPicker gaps={suggestions.gaps} selected={selectedGap} dict={dict} onSelect={setGapKey} />
                 <SuggestionList
-                  key={selectedGap?.key ?? "all"}
                   items={blindSpots}
                   dict={dict}
                   format={format}
