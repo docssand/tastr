@@ -192,14 +192,14 @@ function WrappedContent({ lang, entries, dict }: { lang: string; entries: Normal
             {cards}
           </div>
 
-          <WrappedSummaryPanel report={report} dict={dict} format={format} />
+          <WrappedSummaryPanel report={report} dict={dict} format={format} lang={lang} />
         </>
       ) : (
         // Cambiare anno rimescola il mazzo: la key lo riporta alla prima scheda.
         <WrappedDeck key={report.year} dict={dict.deck}>
           {[
             ...cards,
-            <WrappedSummaryPanel key="summary" report={report} dict={dict} format={format} className="h-full" />,
+            <WrappedSummaryPanel key="summary" report={report} dict={dict} format={format} lang={lang} className="h-full" />,
           ]}
         </WrappedDeck>
       )}

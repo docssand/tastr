@@ -452,6 +452,17 @@
       "restart": "start over",
       "hint": "drag the card left or right — either way moves you on",
       "position": "card {index} of {total}"
+    },
+    "share": {
+      "cta": "share as image",
+      "generating": "rendering the card…",
+      "download": "download image",
+      "shareAction": "share",
+      "shareUnavailable": "sharing isn't supported here — the image was downloaded instead.",
+      "previewTitle": "your wrapped card",
+      "close": "close",
+      "toastErrorTitle": "couldn't generate the image",
+      "toastErrorBody": "try again in a moment."
     }
   },
   "toast": {

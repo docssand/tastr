@@ -452,6 +452,17 @@
       "restart": "ricomincia",
       "hint": "trascina la scheda a destra o a sinistra — in entrambi i casi vai avanti",
       "position": "scheda {index} di {total}"
+    },
+    "share": {
+      "cta": "condividi come immagine",
+      "generating": "genero la scheda…",
+      "download": "scarica l'immagine",
+      "shareAction": "condividi",
+      "shareUnavailable": "la condivisione non è supportata qui: l'immagine è stata scaricata.",
+      "previewTitle": "la tua scheda wrapped",
+      "close": "chiudi",
+      "toastErrorTitle": "generazione non riuscita",
+      "toastErrorBody": "riprova tra un momento."
     }
   },
   "toast": {
