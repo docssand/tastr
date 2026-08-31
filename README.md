@@ -3,10 +3,10 @@
 > `// your movie profile, read from your data.`
 
 **tastr** turns a watch-history export (Trakt, Letterboxd, or Bingers) into a full
-movie-taste profile: who directs the films you love, which genres and decades you
-actually watch, how you compare to the crowd, a Spotify-Wrapped-style yearly recap,
-and a suggestions engine that recommends what to watch next — and what to watch to
-fill the gaps in your taste.
+taste profile: who directs the films you love, which genres and decades you
+actually watch, how far you got with each series you started, how you compare to the
+crowd, a Spotify-Wrapped-style yearly recap, and a suggestions engine that recommends
+what to watch next — and what to watch to fill the gaps in your taste.
 
 Everything runs **local-first**: your import never leaves the browser. It's parsed
 client-side, cached in `localStorage`/IndexedDB, and the only server-side call the
@@ -21,13 +21,14 @@ format automatically:
 
 | Source | What's read |
 |---|---|
-| **Letterboxd** | `diary.csv` / `watched.csv` (+ `ratings.csv` if present) |
-| **Trakt** | the JSON export (watch history, ratings) |
-| **Bingers** | `watches.csv` (+ `ratings.csv` if present) |
+| **Letterboxd** | `diary.csv` / `watched.csv` (+ `ratings.csv` if present) — films only |
+| **Trakt** | the JSON export (movie *and* episode history, show and episode ratings) |
+| **Bingers** | `watches.csv` (+ `ratings.csv` if present), movies and episodes |
 
 Rewatches, ratings, and watch dates are normalized into a single internal format
-regardless of source. Everything is stored in the browser — nothing is uploaded to
-a server.
+regardless of source. Episodes keep their season and episode number, so the series
+section can tell ten episodes apart from one episode watched ten times. Everything is
+stored in the browser — nothing is uploaded to a server.
 
 ### Dashboard
 - **Top 10 directors and actors**, ranked by a custom affinity score that combines
@@ -36,6 +37,27 @@ a server.
   you've followed for a decade.
 - **Charts by decade and by genre**, with a "you vs. the crowd" mode comparing your
   ratings against TMDB's public average.
+
+### Series
+Television counted the way television works — in episodes, not titles. A show is one
+row but sixty viewings, so nothing here reuses the film maths:
+
+- **How far you got** with everything you started: episodes seen against episodes
+  aired, and a status that follows from it — *finished*, *in progress*, *dropped*
+  (left unfinished for over a year) or *sampled* (three episodes or fewer).
+- **Time actually spent**, episodes × runtime, rewatches included.
+- **A devotion score** — `log₂(1 + episodes) × quality × completion` — where quality is
+  the same Bayesian-shrunk distance from your own average used for directors, except a
+  rating on the *series* counts as three episode ratings, because it judges the whole
+  thing rather than one instalment.
+- **Genres ranked by episodes watched**, not by number of shows: two long-runners
+  outweigh six miniseries, which a count of titles gets backwards.
+- **Top creators and actors**, weighted by the episodes you watched *them* in — a
+  recurring lead and a guest star are not the same credit, a distinction that billing
+  order makes for films and episode count makes here.
+
+Anything that needs TMDB (episode totals, runtimes, genres, cast) degrades to a
+visible "unanalyzed" instead of guessing.
 
 ### Wrapped
 An annual recap, picked per watch-year: eight cards (how you rate old vs. new
@@ -88,7 +110,8 @@ browser's preferred locale (`en` or `it`).
 ### 4. Try it
 
 Go to **Upload**, drop a `.zip` export from Letterboxd, Trakt, or Bingers, then
-check out **Dashboard**, **Wrapped**, and **Suggestions**.
+check out **Dashboard**, **Series**, **Wrapped**, and **Suggestions**. (A Letterboxd
+export has no episodes in it, so the Series section will tell you it found none.)
 
 ## Scripts
 
@@ -104,8 +127,8 @@ pnpm lint     # eslint
 - **Next.js 16** (App Router, React 19)
 - **TypeScript**, strict mode
 - **Tailwind CSS 4**
-- **IndexedDB** for the TMDB credits/suggestions cache, **localStorage** for the
-  active import
+- **IndexedDB** for the TMDB credits/suggestions cache (films and series in separate
+  stores — TMDB numbers the two independently), **localStorage** for the active import
 - No backend, no database — the only server code is the `/api/tmdb/*` proxy route
   that attaches your API key to outbound TMDB requests
 
@@ -113,18 +136,19 @@ pnpm lint     # eslint
 
 ```
 src/
-├── app/[lang]/            # localized pages: home, upload, dashboard, wrapped, suggestions
+├── app/[lang]/            # localized pages: home, upload, dashboard, series, wrapped, suggestions
 ├── app/api/tmdb/[...path]/  # TMDB proxy route
 ├── components/
 │   ├── dashboard/         # top people panel, charts, credits enrichment hook
+│   ├── series/            # tv section: show ranking, watch habits, tv credits hook
 │   ├── wrapped/           # yearly recap cards, deck, share-image export
 │   ├── suggestions/       # taste-profile-driven recommendation UI
 │   ├── upload/            # drag-and-drop import flow
 │   └── ui/                # shared building blocks (Panel, Button, Badge, toasts…)
 ├── lib/
 │   ├── importers/         # per-source parsers (letterboxd, trakt, bingers) + registry
-│   ├── analysis/          # movies, people ranking, charts, wrapped, taste profile, recommendations
-│   ├── enrich/             # TMDB credits enrichment + candidate harvesting (with pooling/caching)
+│   ├── analysis/          # movies, shows, people ranking, charts, wrapped, taste profile, recommendations
+│   ├── enrich/             # TMDB credits enrichment (films and series) + candidate harvesting
 │   ├── tmdb.ts             # typed TMDB client (via the proxy route)
 │   ├── idb.ts               # small IndexedDB wrapper
 │   └── storage.ts           # localStorage-backed active import store

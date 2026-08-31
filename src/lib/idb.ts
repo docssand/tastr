@@ -4,12 +4,15 @@
  */
 
 const DB_NAME = "tastr";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 export const CREDITS_STORE = "credits";
 export const LOOKUP_STORE = "lookups";
 /** Risposte TMDB da cui nascono i suggerimenti: liste di candidati, non film già visti. */
 export const HARVEST_STORE = "harvest";
+/** Credits delle serie. Store separati da quelli dei film: TMDB numera film e serie in due sequenze indipendenti. */
+export const SHOW_CREDITS_STORE = "showCredits";
+export const SHOW_LOOKUP_STORE = "showLookups";
 
 let dbPromise: Promise<IDBDatabase> | null = null;
 
@@ -30,6 +33,8 @@ function openDb(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains(CREDITS_STORE)) db.createObjectStore(CREDITS_STORE);
       if (!db.objectStoreNames.contains(LOOKUP_STORE)) db.createObjectStore(LOOKUP_STORE);
       if (!db.objectStoreNames.contains(HARVEST_STORE)) db.createObjectStore(HARVEST_STORE);
+      if (!db.objectStoreNames.contains(SHOW_CREDITS_STORE)) db.createObjectStore(SHOW_CREDITS_STORE);
+      if (!db.objectStoreNames.contains(SHOW_LOOKUP_STORE)) db.createObjectStore(SHOW_LOOKUP_STORE);
     };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error ?? new Error("Apertura IndexedDB fallita."));
@@ -81,10 +86,9 @@ export async function idbPutMany(storeName: string, entries: [IDBValidKey, unkno
 
 export async function idbClearAll(): Promise<void> {
   const db = await openDb();
-  const tx = db.transaction([CREDITS_STORE, LOOKUP_STORE, HARVEST_STORE], "readwrite");
-  tx.objectStore(CREDITS_STORE).clear();
-  tx.objectStore(LOOKUP_STORE).clear();
-  tx.objectStore(HARVEST_STORE).clear();
+  const stores = [CREDITS_STORE, LOOKUP_STORE, HARVEST_STORE, SHOW_CREDITS_STORE, SHOW_LOOKUP_STORE];
+  const tx = db.transaction(stores, "readwrite");
+  stores.forEach((store) => tx.objectStore(store).clear());
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error ?? new Error("Pulizia IndexedDB fallita."));

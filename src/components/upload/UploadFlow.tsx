@@ -7,7 +7,9 @@ import { detectAdapter } from "@/lib/importers/registry";
 import { saveImportResult } from "@/lib/storage";
 import { SOURCE_LABELS, type ImportResult, type ImportWarning } from "@/lib/types";
 import { collectMovies, movieKey } from "@/lib/analysis/movies";
+import { collectShows, showKey } from "@/lib/analysis/shows";
 import { enrichMovies } from "@/lib/enrich/credits";
+import { enrichShows } from "@/lib/enrich/showCredits";
 import { isFatalTmdbError } from "@/lib/tmdb";
 import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/Button";
@@ -101,6 +103,61 @@ export function UploadFlow({ lang, dict, warningMessages }: UploadFlowProps) {
     [appendLog, updateProgressLog, dict],
   );
 
+  /**
+   * Stessa cosa per le serie: episodi totali, durata, generi e cast finiscono nella cache
+   * locale, così la sezione serie si apre già completa. Gira dopo i film e con gli stessi
+   * criteri: un fallimento qui non invalida l'import.
+   */
+  const enrichShowEntries = useCallback(
+    async (parsed: ImportResult): Promise<ImportResult> => {
+      const shows = collectShows(parsed.entries);
+      if (shows.length === 0) return parsed;
+
+      try {
+        let started = false;
+        const snapshot = await enrichShows(shows, {
+          onProgress: ({ done, total }) => {
+            if (total === 0) return;
+            if (!started) {
+              started = true;
+              appendLog(formatMessage(dict.enrichShowsStart, { count: total }));
+            }
+            const step = Math.max(1, Math.floor(total / 100));
+            if (done % step === 0 || done === total) {
+              updateProgressLog(formatMessage(dict.enrichShowsProgress, { done, total }));
+            }
+          },
+        });
+
+        appendLog(
+          started
+            ? formatMessage(dict.enrichShowsDone, { count: snapshot.credits.size })
+            : dict.enrichShowsCached,
+        );
+
+        if (snapshot.resolved.size === 0) return parsed;
+        // Come per i film, gli id risolti per titolo restano nell'import: non si ricercano più.
+        return {
+          ...parsed,
+          entries: parsed.entries.map((entry) => {
+            if (entry.mediaType !== "episode" && entry.mediaType !== "show") return entry;
+            const key = showKey({
+              tmdbId: entry.tmdbId,
+              title: entry.showTitle?.trim() || entry.title.trim(),
+              year: entry.year,
+            });
+            const tmdbId = snapshot.resolved.get(key);
+            return tmdbId ? { ...entry, tmdbId } : entry;
+          }),
+        };
+      } catch (err) {
+        appendLog(isFatalTmdbError(err) && err.status === 503 ? dict.enrichSkipped : dict.enrichFailed);
+        return parsed;
+      }
+    },
+    [appendLog, updateProgressLog, dict],
+  );
+
   const translateWarning = useCallback(
     (warning: ImportWarning) => formatMessage(warningMessages[warning.code], warning.params),
     [warningMessages],
@@ -143,7 +200,7 @@ export function UploadFlow({ lang, dict, warningMessages }: UploadFlowProps) {
         appendLog(formatMessage(dict.itemsImported, { count: parsed.entries.length }));
         parsed.warnings.forEach((w) => appendLog(formatMessage(dict.warningPrefix, { message: translateWarning(w) })));
 
-        const enriched = await enrichEntries(parsed);
+        const enriched = await enrichShowEntries(await enrichEntries(parsed));
         appendLog(dict.ready);
 
         saveImportResult(enriched);
@@ -170,7 +227,7 @@ export function UploadFlow({ lang, dict, warningMessages }: UploadFlowProps) {
         toast.error(message, { title: dict.toastErrorTitle });
       }
     },
-    [appendLog, dict, enrichEntries, translateWarning, toast],
+    [appendLog, dict, enrichEntries, enrichShowEntries, translateWarning, toast],
   );
 
   const onDrop = useCallback(
