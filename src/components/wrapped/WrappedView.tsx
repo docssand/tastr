@@ -8,6 +8,7 @@ import {
 } from "@/lib/storage";
 import { Panel } from "@/components/ui/Panel";
 import { Button, LinkButton } from "@/components/ui/Button";
+import { Mascot } from "@/components/ui/Mascot";
 import { useMovieCredits } from "@/components/dashboard/useMovieCredits";
 import { buildWrapped, watchYears } from "@/lib/analysis/wrapped";
 import { formatMessage } from "@/lib/i18n";
@@ -216,11 +217,16 @@ export function WrappedView({ lang, dict }: WrappedViewProps) {
   if (result === null) {
     return (
       <Panel title={dict.emptyTitle}>
-        <p className="text-sm leading-relaxed text-muted">{dict.emptyBody}</p>
-        <div className="mt-6">
-          <LinkButton href={`/${lang}/upload`} variant="primary">
-            {dict.emptyCta}
-          </LinkButton>
+        <div className="flex flex-col items-center gap-4 py-6 text-center sm:flex-row sm:text-left">
+          <Mascot size={72} />
+          <div>
+            <p className="text-sm leading-relaxed text-muted">{dict.emptyBody}</p>
+            <div className="mt-6">
+              <LinkButton href={`/${lang}/upload`} variant="primary">
+                {dict.emptyCta}
+              </LinkButton>
+            </div>
+          </div>
         </div>
       </Panel>
     );
