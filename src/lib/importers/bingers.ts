@@ -46,6 +46,44 @@ function toEntry(row: { type?: string; title?: string; season_number?: string; e
   };
 }
 
+/** "2024-07-03T21:10:00Z" → "2024". */
+function yearOf(date: string) {
+  return date.slice(0, 4);
+}
+
+/**
+ * Una riga di watches.csv riassume tutte le visioni di un titolo: quante sono, la prima
+ * e l'ultima data. Tenerle su una sola riga datata all'ultima visione attribuirebbe
+ * all'anno dell'ultima anche le visioni degli anni prima, gonfiando Wrapped e rewatch.
+ *
+ * Qui la riga si divide in una visione alla prima data e le restanti all'ultima. Le
+ * visioni di mezzo cadono fra le due date: se sono nello stesso anno stanno in
+ * quell'anno, altrimenti l'anno non si può sapere e restano senza data.
+ */
+function viewingsOf(row: WatchRow): NormalizedEntry[] {
+  const base = toEntry(row);
+  const parsed = Number(row.plays);
+  const plays = Number.isFinite(parsed) && parsed > 0 ? Math.max(1, Math.round(parsed)) : 1;
+  const first = row.first_watched_at || undefined;
+  const last = row.last_watched_at || undefined;
+
+  if (plays === 1 || !first || !last || first === last) {
+    return [{ ...base, watchedAt: last ?? first, rewatch: plays > 1, plays }];
+  }
+
+  const middle = plays - 2;
+  const sameYear = yearOf(first) === yearOf(last);
+  // L'ultima visione va per prima: è lì che ratings.csv attacca il voto.
+  const viewings: NormalizedEntry[] = [
+    { ...base, watchedAt: last, rewatch: true, plays: sameYear ? middle + 1 : 1 },
+    { ...base, id: `${base.id}:first`, watchedAt: first, plays: 1 },
+  ];
+  if (!sameYear && middle > 0) {
+    viewings.push({ ...base, id: `${base.id}:middle`, rewatch: true, plays: middle });
+  }
+  return viewings;
+}
+
 export const bingersAdapter: ImportAdapter = {
   source: "bingers",
   label: "Bingers",
@@ -56,19 +94,13 @@ export const bingersAdapter: ImportAdapter = {
 
   async parse(zip: ZipContents, fileName: string): Promise<ImportResult> {
     const warnings: ImportWarning[] = [];
-    const entries = new Map<string, NormalizedEntry>();
+    const entries = new Map<string, NormalizedEntry[]>();
 
     if (zip.has("watches.csv")) {
       const rows = parseCsv<WatchRow>(await zip.readText("watches.csv"));
       for (const row of rows) {
         if (!row.title) continue;
-        const plays = Number(row.plays);
-        entries.set(entryKey(row), {
-          ...toEntry(row),
-          watchedAt: row.last_watched_at || row.first_watched_at,
-          rewatch: plays > 1,
-          plays: Number.isFinite(plays) && plays > 0 ? plays : 1,
-        });
+        entries.set(entryKey(row), viewingsOf(row));
       }
     } else {
       warnings.push({ code: "bingersNoWatches" });
@@ -82,9 +114,11 @@ export const bingersAdapter: ImportAdapter = {
         const rating = Number(row.rating) * 2;
         const existing = entries.get(key);
         if (existing) {
-          existing.rating = rating;
+          // Sulla visione più recente, che viewingsOf mette per prima: collectShows
+          // conta il voto di un episodio solo sulla prima riga che incontra.
+          existing[0].rating = rating;
         } else {
-          entries.set(key, { ...toEntry(row), rating });
+          entries.set(key, [{ ...toEntry(row), rating }]);
         }
       }
     }
@@ -97,7 +131,7 @@ export const bingersAdapter: ImportAdapter = {
       source: "bingers",
       importedAt: new Date().toISOString(),
       fileName,
-      entries: Array.from(entries.values()),
+      entries: Array.from(entries.values()).flat(),
       warnings,
     };
   },
